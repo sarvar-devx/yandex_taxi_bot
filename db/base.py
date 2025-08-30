@@ -1,4 +1,8 @@
-from sqlalchemy import delete as sqlalchemy_delete, update as sqlalchemy_update, select, func, BigInteger
+from datetime import datetime
+
+import pytz
+from sqlalchemy import delete as sqlalchemy_delete, update as sqlalchemy_update, select, func, BigInteger, \
+    types
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, AsyncSession
 from sqlalchemy.orm import DeclarativeBase, declared_attr, sessionmaker, Mapped, mapped_column, selectinload
 
@@ -105,3 +109,27 @@ class BaseModel(Base, AbstractClass):
 
     def __str__(self):
         return f"{self.id}"
+
+
+class TimeStamp(types.TypeDecorator):
+    impl = types.DateTime(timezone=True)
+    cache_ok = True
+    TASHKENT_TIMEZONE = pytz.timezone("Asia/Tashkent")
+
+    def process_bind_param(self, value: datetime, dialect):
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=pytz.utc)
+        return value.astimezone(pytz.utc)
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            return value.astimezone(self.TASHKENT_TIMEZONE)
+        return value
+
+
+class TimeBaseModel(BaseModel):
+    __abstract__ = True
+    created_at: Mapped[TimeStamp] = mapped_column(TimeStamp, server_default=func.now())
+    updated_at: Mapped[TimeStamp] = mapped_column(TimeStamp, server_default=func.now(), server_onupdate=func.now())
