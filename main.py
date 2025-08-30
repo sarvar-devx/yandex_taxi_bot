@@ -1,0 +1,36 @@
+import asyncio
+import logging
+import sys
+
+from aiogram import Dispatcher, Bot
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.types import BotCommand
+
+from config import conf
+
+
+async def on_start(bot: Bot):
+    user_commands = [
+        BotCommand(command='start', description="🏁 Bo'tni ishga tushirish"),
+        BotCommand(command='help', description="🆘 yordam"),
+    ]
+    await bot.set_my_commands(commands=user_commands)
+
+
+async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
+    await bot.delete_my_commands()
+
+
+async def main_polling():
+    dp = Dispatcher()
+    dp.startup.register(on_start)
+    dp.shutdown.register(on_shutdown)
+    dp.include_routers()
+    bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    await dp.start_polling(bot)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    asyncio.run(main_polling())
