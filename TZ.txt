@@ -5,8 +5,8 @@ Taxi Go:
     Login register:
         Ism,
         Familiya,
-        O'z rasminggiz,
         Telefon raqami,
+        O'z rasminggiz,
         Avtomobil toifasi,
         Davlat raqami,
         Litsenziya muddati
