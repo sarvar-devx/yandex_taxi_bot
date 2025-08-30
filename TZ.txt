@@ -1,0 +1,85 @@
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= Yandex Taxi Bot =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Taxi Go:
+    Login register:
+        Ism,
+        Familiya,
+        O'z rasminggiz,
+        Telefon raqami,
+        Avtomobil toifasi,
+        Davlat raqami,
+        Litsenziya muddati
+
+    Lokation:
+        Klent lokatsiyasi
+        Mazil lokatsiyasi
+
+    Masofa:
+        Masofa hisoblanishi kerak
+        Nechi daqiqada mijozga  etib briladi
+        Nechi daqiqada manzilga etib boriladi
+
+    To'lov:
+        Mijoz cartada to'lov qiladi
+        Mijoz naqt to'lov qiladi
+
+    Aloqa:
+        Mijoz raqami:
+
+    Qoshimcha:
+        Yuk bilan
+        Yuksiz
+
+    Xabar:
+        Mijozgacha XX daqiqa qoldi
+        Manzilgacha XX daqiqa qoldi
+        Taxi etib keldi,
+        Taxi kutyapti,
+        Tirbandlikda
+
+Taxi klient:
+    Login:
+        telefon raqam,
+
+    Mazil:
+        Mashina lokatsiyasi
+        qanchada etib kelishi
+        Narxi
+
+    To'lov:
+        Naqd,
+        Carta
+
+    Toifa:
+        Start,
+        Comfort
+        Biznes+
+
+    Kim ketadi
+        Men:
+            Yuk bilan,
+            yuksiz
+
+        Boshqa:
+            D'stim,
+            Olia a'zolarim
+            Boshqa
+
+        Qo'shimcha
+            Yuk bilan,
+            YUksiz
+
+    Xabarlar:
+        Taxi kelyapti,
+        Taxi XX daqiqada keladi
+        Mazilga XX daqiqa qoldi
+        Taxi keldi,
+        Qidirlmoqda,
+        Taxi 5 daqiqa kutadi,
+        Comment
+        Safarni bekor qilish
+            Sabablari:
+                Juda uzoq kutiladi,
+                Rejalar o'zgardi
+                Mashina rusumi yoqmadi,
