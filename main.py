@@ -7,13 +7,16 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 
-from bot.handlers.main_handler import main_router
+from bot.handlers.main import main_router
+from bot.middlewares import RegistrationMiddleware
 from config import conf
 
 
 async def on_start(bot: Bot):
     user_commands = [
         BotCommand(command='start', description="🏁 Bo'tni ishga tushirish"),
+        BotCommand(command='cancel', description="❌ Bekor qilish"),
+        BotCommand(command='myinfo', description="📝 Mening malumotlarim"),
         BotCommand(command='help', description="🆘 yordam"),
     ]
     await bot.set_my_commands(commands=user_commands)
@@ -26,8 +29,9 @@ async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
 async def main_polling():
     dp = Dispatcher()
     dp.startup.register(on_start)
+    dp.update.middleware(RegistrationMiddleware())
     dp.shutdown.register(on_shutdown)
-    dp.include_routers(main_router,)
+    dp.include_routers(main_router, )
     bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     await dp.start_polling(bot)
 
