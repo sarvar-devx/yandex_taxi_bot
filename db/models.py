@@ -8,7 +8,7 @@ class UserFields:
     username: Mapped[str] = mapped_column(String(255), nullable=True)
     first_name: Mapped[str] = mapped_column(String(64))
     last_name: Mapped[str] = mapped_column(String(64), nullable=True)
-    phone_number: Mapped[str] = mapped_column(String(12))
+    phone_number: Mapped[str] = mapped_column(String(12), unique=True)
 
 
 class User(TimeBaseModel, UserFields):
