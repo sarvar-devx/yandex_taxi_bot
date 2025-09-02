@@ -30,6 +30,7 @@ class BotConfig(BaseConfig):
     BOT_TOKEN: str = os.getenv('BOT_TOKEN')
     BOT_USERNAME: str = os.getenv('BOT_USERNAME')
     ADMIN_LIST: str = os.getenv('ADMIN_LIST')
+    OPERATOR_NUMBER: str = os.getenv('OPERATOR_NUMBER')
 
 
     @property
