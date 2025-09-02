@@ -1,7 +1,5 @@
-makemigrations:
+mig:
 	alembic revision --autogenerate -m "initial commit"
-
-migrate:
 	alembic upgrade heads
 
 down-migrate:
