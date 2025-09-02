@@ -7,7 +7,10 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 
+from bot.handlers.commands import command_router
 from bot.handlers.main import main_router
+from bot.handlers.register import register_router
+from bot.handlers.user import user_router
 from bot.middlewares import RegistrationMiddleware
 from config import conf
 
@@ -31,7 +34,12 @@ async def main_polling():
     dp.startup.register(on_start)
     dp.update.middleware(RegistrationMiddleware())
     dp.shutdown.register(on_shutdown)
-    dp.include_routers(main_router, )
+    dp.include_routers(
+        main_router,
+        register_router,
+        command_router,
+        user_router
+    )
     bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     await dp.start_polling(bot)
 
