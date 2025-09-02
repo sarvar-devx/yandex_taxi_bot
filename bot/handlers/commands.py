@@ -5,7 +5,6 @@ from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.keyboard.reply import UserButtons
-from config import conf
 from db import User
 from utils.services import greeting_user
 
@@ -15,6 +14,7 @@ command_router = Router()
 @command_router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await greeting_user(message)
+    await state.clear()
 
 
 @command_router.message(Command(commands='cancel'))

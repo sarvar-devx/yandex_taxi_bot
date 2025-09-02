@@ -2,13 +2,19 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from bot.handlers.commands import myinfo_command_handler
+from bot.handlers.commands import myinfo_command_handler, command_start_handler
 from bot.keyboard.reply import UserButtons
 from bot.states.user import ChangeNameStates
 from db import User
 from utils.services import validate_name_input
 
 user_router = Router()
+
+
+
+@user_router.message(F.text == UserButtons.BACK)
+async def back_admin_menu_handler(message: Message, state: FSMContext):
+    await command_start_handler(message, state)
 
 
 @user_router.message(F.text == UserButtons.CHANGE_FIRST_NAME)
