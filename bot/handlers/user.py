@@ -11,7 +11,6 @@ from utils.services import validate_name_input
 user_router = Router()
 
 
-
 @user_router.message(F.text == UserButtons.BACK)
 async def back_admin_menu_handler(message: Message, state: FSMContext):
     await command_start_handler(message, state)
