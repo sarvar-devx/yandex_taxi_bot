@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
@@ -11,23 +11,23 @@ from utils.services import greeting_user
 command_router = Router()
 
 
-@command_router.message(CommandStart())
+@command_router.message(CommandStart(),  StateFilter(None))
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await greeting_user(message)
     await state.clear()
 
 
-@command_router.message(Command(commands='cancel'))
+@command_router.message(Command(commands='cancel'),  StateFilter(None))
 async def command_cancel_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Bekor qilindi')
     await state.clear()
 
 
-@command_router.message(Command(commands='myinfo'))
+@command_router.message(Command(commands='myinfo'),  StateFilter(None))
 async def myinfo_command_handler(message: Message) -> None:
     rkb = ReplyKeyboardBuilder(
         [[KeyboardButton(text=UserButtons.CHANGE_FIRST_NAME), KeyboardButton(text=UserButtons.CHANGE_LAST_NAME)],
-         [KeyboardButton(text=UserButtons.BACK)]])
+         [KeyboardButton(text=UserButtons.BACK), KeyboardButton(text=UserButtons.BECOME_DRIVER)], ])
     user = await User.get(message.from_user.id)
     # 📊 Buyurtmalar soni: {await TestAnswer.count_by(TestAnswer.user_id == user.id)} ta
     await message.answer(f'''🙎🏻‍♂️ Ism: {user.first_name}

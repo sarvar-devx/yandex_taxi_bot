@@ -1,11 +1,13 @@
-from aiogram import Router
+from aiogram import Router, F, Bot
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
-from bot.keyboard.reply import phone_number_rkb
-from bot.states.user import UserStates
+from bot.keyboard.reply import phone_number_rkb, UserButtons
+from bot.states.user import UserStates, DriverStates
 from config import conf
 from db import User
+from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user
 
 register_router = Router()
@@ -47,3 +49,24 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
     #     return
     await greeting_user(message)
     await state.clear()
+
+
+@register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
+async def become_to_driver(message: Message, state: FSMContext) -> None:
+    await state.update_data(user_id=message.from_user.id)
+    await message.answer("Rasmingizni kiriting",
+                         reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=UserButtons.BACK)]],
+                                                          resize_keyboard=True))
+    await state.set_state(DriverStates.image)
+
+
+@register_router.message(DriverStates.image)
+async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> None:
+    if not await has_face(bot, message.photo[-1].file_id):
+        await message.answer("bu rasmda odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
+        await become_to_driver(message, state)
+        return
+
+    await state.update_data(image=message.photo[-1].file_id)
+    await message.answer("Moshina rusmini kiriting: ")
+    await state.set_state(DriverStates.car_brand)

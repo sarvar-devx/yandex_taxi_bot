@@ -7,7 +7,8 @@ class UserButtons:
     OPERATOR = "📞 Operator"
     CHANGE_FIRST_NAME = "✍ Ismni o'zgartirish"
     CHANGE_LAST_NAME = "✍ Familiyani o'zgartirish"
-    BACK = '🔙 Orqaga'
+    BECOME_DRIVER = "🚖 Haydovchi bo'lish"
+    BACK = "🔙 Orqaga"
     ORDER_HISTORY = "📝 Buyurtmalar tarixi"
 
 

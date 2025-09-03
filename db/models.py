@@ -16,9 +16,11 @@ class User(TimeBaseModel):
 
 class Driver(TimeBaseModel):
     image: Mapped[str] = mapped_column(String(255))
-    car_category: Mapped[str] = mapped_column(String(255))
+    car_brand: Mapped[str] = mapped_column(String(255))
     car_number: Mapped[str] = mapped_column(String(8))
     license_term: Mapped[str] = mapped_column(String(255))
+    car_type: Mapped[str] = mapped_column(String(50), nullable=True)
+    has_permission: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     has_client: Mapped[bool] = mapped_column(Boolean, default=False)
 

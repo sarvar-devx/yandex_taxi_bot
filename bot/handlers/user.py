@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
@@ -11,12 +12,7 @@ from utils.services import validate_name_input
 user_router = Router()
 
 
-@user_router.message(F.text == UserButtons.BACK)
-async def back_admin_menu_handler(message: Message, state: FSMContext):
-    await command_start_handler(message, state)
-
-
-@user_router.message(F.text == UserButtons.CHANGE_FIRST_NAME)
+@user_router.message(F.text == UserButtons.CHANGE_FIRST_NAME,  StateFilter(None))
 async def send_first_name_handler(message: Message, state: FSMContext) -> None:
     await message.answer("✍️ <b>Ismingizni kiriting</b>", reply_markup=ReplyKeyboardRemove())
     await state.set_state(ChangeNameStates.first_name)
@@ -34,7 +30,7 @@ async def change_first_name_handler(message: Message, state: FSMContext) -> None
     await state.clear()
 
 
-@user_router.message(F.text == UserButtons.CHANGE_LAST_NAME)
+@user_router.message(F.text == UserButtons.CHANGE_LAST_NAME,  StateFilter(None))
 async def send_last_name_handler(message: Message, state: FSMContext) -> None:
     await message.answer("✍️ <b>Familiyangizni kiriting</b>", reply_markup=ReplyKeyboardRemove())
     await state.set_state(ChangeNameStates.last_name)
