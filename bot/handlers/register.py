@@ -1,3 +1,5 @@
+import re
+
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
@@ -62,11 +64,53 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
 
 @register_router.message(DriverStates.image)
 async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> None:
+    if not message.photo:
+        await message.answer("Iltimos, faqat rasm yuboring.")
+        return
+
     if not await has_face(bot, message.photo[-1].file_id):
         await message.answer("bu rasmda odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
-        await become_to_driver(message, state)
+        await state.set_state(DriverStates.image)
         return
 
     await state.update_data(image=message.photo[-1].file_id)
     await message.answer("Moshina rusmini kiriting: ")
     await state.set_state(DriverStates.car_brand)
+
+
+@register_router.message(DriverStates.car_brand)
+async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
+    if not re.match(r'^[a-zA-Z0-9\s-]+$', message.text):
+        await message.answer("Mashina rusumi aniqlanmadi iltimos qaytadan harakat qiling")
+        await state.set_state(DriverStates.car_brand)
+        return
+
+    await state.update_data(car_brand=message.text)
+    await message.answer_photo('AgACAgIAAxkBAAIGJGi4QjabuaKCED9faj4ZehZzuHL7AAKKETIbUxjBSQ9rjR1qd3XyAQADAgADbQADNgQ',
+                               caption="Mashina raqamini kiriting")
+    await state.set_state(DriverStates.car_number)
+
+
+@register_router.message(DriverStates.car_number)
+async def handle_car_number_input(message: Message, state: FSMContext) -> None:
+    pattern = r'^[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
+
+    if not re.match(pattern, message.text.upper()):
+        await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: [ A 968 EG ] ko'rinishida")
+        await state.set_state(DriverStates.car_number)
+        return
+
+    await state.update_data(car_number=message.text)
+    await message.answer("Yandex litsenziya id raqamini kiriting:")
+    await state.set_state(DriverStates.license_term)
+
+
+@register_router.message(DriverStates.license_term)
+async def handle_license_input(message: Message, state: FSMContext) -> None:
+    if not message.text:
+        await message.answer(f"Xatolik litsenziya IDda str va raqam kiritiladi")
+        await state.set_state(DriverStates.license_term)
+        return
+
+    await state.update_data(license_term=message.text)
+    await message.answer("Profil muvaffaqiyatli yangilandi !")
