@@ -7,7 +7,6 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from bot.keyboard.reply import phone_number_rkb, UserButtons
 from bot.states.user import UserStates, DriverStates
-from config import conf
 from db import User
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user
@@ -112,3 +111,5 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
 
     await state.update_data(license_term=message.text)
     await message.answer("Profil muvaffaqiyatli yangilandi !")
+
+

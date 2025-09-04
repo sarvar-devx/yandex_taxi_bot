@@ -5,6 +5,8 @@ class UserStates(StatesGroup):
     first_name = State()
     last_name = State()
     phone_number = State()
+    taxi_order = State()
+    operator = State()
 
 
 class ChangeNameStates(StatesGroup):
@@ -18,3 +20,4 @@ class DriverStates(StatesGroup):
     car_brand = State()
     car_number = State()
     license_term = State()
+    my_info_taxi = State()

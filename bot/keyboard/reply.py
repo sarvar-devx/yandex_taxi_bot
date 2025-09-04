@@ -12,6 +12,16 @@ class UserButtons:
     ORDER_HISTORY = "📝 Buyurtmalar tarixi"
 
 
+class DriverButtons:
+    START_DRIVE = "Ishni boshlash"
+    END_DRIVE = "Ishni tugatish"
+    CHANGE_DRIVE_NAME = "Ismni o'zgartirish"
+    CHANGE_DRIVE_CAR_NAME = "Mashina nomini o'zgartirish"
+    CHANGE_DRIVE_CAR_NUM = "Mashina raqamini o'zgartirish"
+    CHANGE_DRIVE_LICENSE = "Litsenziyani o'zgartirish"
+    CHANGE_DRIVE_IMAGE = "Haydovchi rasmini ozgartirish"
+
+
 def main_keyboard_btn(**kwargs) -> ReplyKeyboardBuilder:
     main_keyboard = ReplyKeyboardBuilder()
     main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_TAXI, **kwargs))

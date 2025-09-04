@@ -35,6 +35,13 @@ async def myinfo_command_handler(message: Message) -> None:
 📞 Telefon raqam: +998{user.phone_number}
 Tanlang: 👇''', reply_markup=rkb.as_markup(resize_keyboard=True))
 
+
+
+
+
+
+
+
 # @command_router.message(Command(commands='help'))
 # async def help_command_handler(message: Message) -> None:
 #     await message.answer(F'''Buyruqlar:
