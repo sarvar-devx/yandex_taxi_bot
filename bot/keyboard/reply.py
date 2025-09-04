@@ -13,13 +13,12 @@ class UserButtons:
 
 
 class DriverButtons:
-    START_DRIVE = "Ishni boshlash"
-    END_DRIVE = "Ishni tugatish"
-    CHANGE_DRIVE_NAME = "Ismni o'zgartirish"
-    CHANGE_DRIVE_CAR_NAME = "Mashina nomini o'zgartirish"
-    CHANGE_DRIVE_CAR_NUM = "Mashina raqamini o'zgartirish"
-    CHANGE_DRIVE_LICENSE = "Litsenziyani o'zgartirish"
-    CHANGE_DRIVE_IMAGE = "Haydovchi rasmini ozgartirish"
+    START_WORK = "Ishni boshlash"
+    FINISH_WORK = "Ishni tugatish"
+    CHANGE_CAR_BRAND = "Mashina nomini o'zgartirish"
+    CHANGE_CAR_NUMBER = "Mashina raqamini o'zgartirish"
+    CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
+    CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
 
 
 def main_keyboard_btn(**kwargs) -> ReplyKeyboardBuilder:
