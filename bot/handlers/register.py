@@ -92,7 +92,8 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
 
 @register_router.message(DriverStates.car_number)
 async def handle_car_number_input(message: Message, state: FSMContext) -> None:
-    if not re.match(r'^\d{2}\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$', message.text):
+    pattern = r'^(01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
+    if not re.match(pattern, message.text.upper()):
         await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: [ A 968 EG ] ko'rinishida")
         await state.set_state(DriverStates.car_number)
         return
