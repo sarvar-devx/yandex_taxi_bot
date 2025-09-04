@@ -86,16 +86,13 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
         return
 
     await state.update_data(car_brand=message.text)
-    await message.answer_photo('AgACAgIAAxkBAAIGJGi4QjabuaKCED9faj4ZehZzuHL7AAKKETIbUxjBSQ9rjR1qd3XyAQADAgADbQADNgQ',
-                               caption="Mashina raqamini kiriting")
+    await message.answer("Mashina raqamini kiriting")
     await state.set_state(DriverStates.car_number)
 
 
 @register_router.message(DriverStates.car_number)
 async def handle_car_number_input(message: Message, state: FSMContext) -> None:
-    pattern = r'^[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
-
-    if not re.match(pattern, message.text.upper()):
+    if not re.match(r'^\d{2}\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$', message.text):
         await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: [ A 968 EG ] ko'rinishida")
         await state.set_state(DriverStates.car_number)
         return
