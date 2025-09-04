@@ -4,10 +4,11 @@ from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from sqlalchemy.util import await_only
 
 from bot.keyboard.reply import phone_number_rkb, UserButtons
 from bot.states.user import UserStates, DriverStates
-from db import User
+from db import User, Driver
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user
 
@@ -54,6 +55,9 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
+    if driver := await Driver.get(message.from_user.id):
+        await message.answer("")
+
     await state.update_data(user_id=message.from_user.id)
     await message.answer("Rasmingizni kiriting",
                          reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=UserButtons.BACK)]],
@@ -93,7 +97,7 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
 async def handle_car_number_input(message: Message, state: FSMContext) -> None:
     pattern = r'^(01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
     if not re.match(pattern, message.text.upper()):
-        await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: [ A 968 EG ] ko'rinishida")
+        await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: <b>01 A 123 AB</b> ko'rinishida")
         await state.set_state(DriverStates.car_number)
         return
 
@@ -110,6 +114,5 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
         return
 
     await state.update_data(license_term=message.text)
-    await message.answer("Profil muvaffaqiyatli yangilandi !")
-
-
+    driver_data = await state.get_data()
+    await Driver.create(**driver_data)
