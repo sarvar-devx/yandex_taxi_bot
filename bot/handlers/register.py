@@ -56,7 +56,8 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
     if driver := await Driver.get(message.from_user.id):
-        await message.answer("")
+        msg = f'<a href="">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
+        await message.answer_photo(driver.image, caption=msg)
 
     await state.update_data(user_id=message.from_user.id)
     await message.answer("Rasmingizni kiriting",
