@@ -46,7 +46,7 @@ def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_LICENSE_TERM))
 
-# phone_number_rkb = ReplyKeyboardMarkup(
-#     keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)
+phone_number_rkb = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)
 
 

@@ -15,7 +15,7 @@ from utils.services import validate_name_input, send_first_name, send_last_name,
 register_router = Router()
 
 
-# first_name qabul qiladi va tekshiradi kegin last_name ga otkazadi
+# first_name qabul qiladi va tekshiradi kegin last_name ga yonaltrish
 @register_router.message(UserStates.first_name)
 async def handle_first_name_input(message: Message, state: FSMContext) -> None:
     if not await validate_name_input(message, send_first_name, state):
@@ -25,6 +25,7 @@ async def handle_first_name_input(message: Message, state: FSMContext) -> None:
     await state.update_data(first_name=message.text.title())
 
 
+# User familiyasin saqalsh va familiya button ga yonaltrish
 @register_router.message(UserStates.last_name)
 async def handle_last_name_input(message: Message, state: FSMContext) -> None:
     if not await validate_name_input(message, send_last_name, state):
@@ -35,6 +36,7 @@ async def handle_last_name_input(message: Message, state: FSMContext) -> None:
     await state.set_state(UserStates.phone_number)
 
 
+# User telefon raqamini saqlash
 @register_router.message(UserStates.phone_number)
 async def handle_phone_input(message: Message, state: FSMContext) -> None:
     if message.contact is None or message.contact.user_id != message.from_user.id:
@@ -50,6 +52,7 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
     await state.clear()
 
 
+# Oddi user driver bolmoqchi bolsa javob beruvchi buttonlar
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
     if driver := (await Driver.filter(Driver.user_id == message.from_user.id)):
@@ -68,6 +71,7 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
     await state.set_state(DriverStates.image)
 
 
+# Haydovchi rasmini qabul qilib avto rusumini saqlash buttoniga yonaltrish
 @register_router.message(DriverStates.image)
 async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> None:
     if not message.photo:
@@ -84,6 +88,7 @@ async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> N
     await state.set_state(DriverStates.car_brand)
 
 
+# Haydovchi ni mashina rusumini saqlab mashina raqamini saqalsh ga yonaltrish
 @register_router.message(DriverStates.car_brand)
 async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
     if not re.match(r'^[a-zA-Z0-9\s-]+$', message.text):
@@ -96,6 +101,7 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
     await state.set_state(DriverStates.car_number)
 
 
+# Driver Tel raqamini qabul qilib litsenziyaga yonaltrish
 @register_router.message(DriverStates.car_number)
 async def handle_car_number_input(message: Message, state: FSMContext) -> None:
     pattern = r'^(01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
@@ -109,6 +115,7 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
     await state.set_state(DriverStates.license_term)
 
 
+# Litsenziyani qabul qiladi qiymat bolsa boldi True qaytarad
 @register_router.message(DriverStates.license_term)
 async def handle_license_input(message: Message, state: FSMContext) -> None:
     if not message.text:
@@ -121,6 +128,7 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     await Driver.create(**driver_data)
 
 
+# Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
 @register_router.callback_query(F.data.startswith('reject_driving'))
 async def handle_reject_driving_input(callback: CallbackQuery) -> None:
     driver = (await Driver.filter(Driver.user_id == callback.from_user.id))
