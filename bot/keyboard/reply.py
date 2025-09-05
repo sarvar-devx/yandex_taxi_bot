@@ -21,7 +21,6 @@ class DriverButtons:
     CHANGE_CAR_NUMBER = "Mashina raqamini o'zgartirish"
     CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
     CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
-    BACK = "🔙 Orqaga"
 
 
 class AdminButtons:
@@ -41,12 +40,16 @@ def main_keyboard_btn() -> ReplyKeyboardBuilder:
 
 def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard = ReplyKeyboardBuilder()
+    driver_keyboard.row(KeyboardButton(text=UserButtons.CHANGE_FIRST_NAME))
+    driver_keyboard.row(KeyboardButton(text=UserButtons.CHANGE_LAST_NAME))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_IMAGE))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_BRAND))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_LICENSE_TERM))
+    driver_keyboard.row(KeyboardButton(text=UserButtons.BACK))
+    driver_keyboard.adjust(2, repeat=True)
+    return driver_keyboard
+
 
 phone_number_rkb = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)
-
-

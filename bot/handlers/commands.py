@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.keyboard.reply import UserButtons, DriverButtons
+from bot.keyboard.reply import UserButtons, DriverButtons, driver_info_keyboard_btn
 from db import User, Driver
 from utils.services import greeting_user
 
@@ -29,27 +29,23 @@ async def myinfo_command_handler(message: Message) -> None:
         [[KeyboardButton(text=UserButtons.CHANGE_FIRST_NAME), KeyboardButton(text=UserButtons.CHANGE_LAST_NAME)],
          [KeyboardButton(text=UserButtons.BACK), KeyboardButton(text=UserButtons.BECOME_DRIVER)], ])
     user = await User.get(message.from_user.id)
-    # 📊 Buyurtmalar soni: {await TestAnswer.count_by(TestAnswer.user_id == user.id)} ta
-    await message.answer(f'''🙎🏻‍♂️ Ism: {user.first_name}
+    user_photo = "https://cdn-icons-png.flaticon.com/512/1933/1933233.png"
+    msg = f'''🙎🏻‍♂️ Ism: {user.first_name}
 🙎🏻‍♂️ Familiya: {user.last_name}
-📞 Telefon raqam: +998{user.phone_number}
-Tanlang: 👇''', reply_markup=rkb.as_markup(resize_keyboard=True))
+📞 Telefon raqam: +998{user.phone_number}'''
 
+    if driver := await Driver.filter(Driver.user_id == message.from_user.id):
+        rkb = driver_info_keyboard_btn()
+        driver = driver[0]
+        user_photo = driver.image
+        msg += F"""\n🏎 Mashina rusimi: {driver.car_brand}
+🔢 Mashina raqami: <b><tg-spoiler>{driver.car_number}</tg-spoiler></b>"""
+        if driver.has_permission:
+            msg += f"Mashina toifasi {driver.car_type}"
 
-
-@command_router.message(Command(commands='driver_info'), StateFilter(None))
-async def driver_info_command_handler(message: Message):
-    rkb = ReplyKeyboardBuilder(
-        [[KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER), KeyboardButton(text=DriverButtons.CHANGE_CAR_BRAND)],
-          KeyboardButton(text=DriverButtons.CHANGE_IMAGE), KeyboardButton(text=DriverButtons.BACK)])
-
-    driver = await Driver.get(message.from_user.id)
-    await message.answer(f'''🏎 Car brand: {driver.car_brand}
-🔢 Car_number: {driver.car_number}
-🏞 Driver_image: {driver.image}
-Tanlash: ''',reply_markup=rkb.as_markup(resize_keyboard=True))
-
-
+    # 📊 Buyurtmalar soni: {await TestAnswer.count_by(TestAnswer.user_id == user.id)} ta
+    await message.answer_photo(user_photo, caption=msg + "\nTanlang: 👇",
+                               reply_markup=rkb.as_markup(resize_keyboard=True))
 
 # @command_router.message(Command(commands='help'))
 # async def help_command_handler(message: Message) -> None:

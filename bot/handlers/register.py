@@ -55,7 +55,7 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 # Oddi user driver bolmoqchi bolsa javob beruvchi buttonlar
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
-    if driver := (await Driver.filter(Driver.user_id == message.from_user.id)):
+    if driver := await Driver.filter(Driver.user_id == message.from_user.id):
         driver = driver[0]
         msg = f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
         await message.answer_photo(driver.image, caption=msg)
@@ -96,7 +96,7 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
         await state.set_state(DriverStates.car_brand)
         return
 
-    await state.update_data(car_brand=message.text)
+    await state.update_data(car_brand=message.text.upper())
     await message.answer("Mashina raqamini kiriting")
     await state.set_state(DriverStates.car_number)
 
@@ -126,6 +126,7 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     await state.update_data(license_term=message.text)
     driver_data = await state.get_data()
     await Driver.create(**driver_data)
+    await state.clear()
 
 
 # Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
