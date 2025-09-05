@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
@@ -22,7 +22,6 @@ async def command_cancel_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Bekor qilindi')
     await state.clear()
 
-
 @command_router.message(Command(commands='myinfo'),  StateFilter(None))
 async def myinfo_command_handler(message: Message) -> None:
     rkb = ReplyKeyboardBuilder(
@@ -34,7 +33,6 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}
 Tanlang: 👇''', reply_markup=rkb.as_markup(resize_keyboard=True))
-
 
 
 

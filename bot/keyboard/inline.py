@@ -6,3 +6,15 @@ inline button
 [malumotni tasdiqlayman admin korib chiqishi uchun] [yoq men driverlikdan bosh tortaman]
 
 """
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+
+class DriverRequestButtons:
+    CONFIRM = InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="confirm_driver")
+    REJECT = InlineKeyboardButton(text="❌ Rad etish", callback_data="reject_driver")
+
+    @staticmethod
+    def get_markup():
+        return InlineKeyboardMarkup(inline_keyboard=[
+            [DriverRequestButtons.CONFIRM, DriverRequestButtons.REJECT]
+        ])
