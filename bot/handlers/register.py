@@ -116,3 +116,4 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     await state.update_data(license_term=message.text)
     driver_data = await state.get_data()
     await Driver.create(**driver_data)
+

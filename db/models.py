@@ -10,6 +10,7 @@ class User(TimeBaseModel):
     last_name: Mapped[str] = mapped_column(String(64), nullable=True)
     phone_number: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
     user_type: Mapped[str] = mapped_column(String(10), default="client")
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False)
 
