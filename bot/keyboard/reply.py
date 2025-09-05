@@ -1,6 +1,8 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
+from db import Driver
+
 
 class UserButtons:
     ORDER_TAXI = "🚕 Taxi buyurtma qilish"
@@ -19,6 +21,7 @@ class DriverButtons:
     CHANGE_CAR_NUMBER = "Mashina raqamini o'zgartirish"
     CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
     CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
+    BACK = "🔙 Orqaga"
 
 
 class AdminButtons:
@@ -37,8 +40,13 @@ def main_keyboard_btn() -> ReplyKeyboardBuilder:
 
 
 def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
-    pass
+    driver_keyboard = ReplyKeyboardBuilder()
+    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_IMAGE))
+    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_BRAND))
+    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER))
+    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_LICENSE_TERM))
+
+# phone_number_rkb = ReplyKeyboardMarkup(
+#     keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)
 
 
-phone_number_rkb = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)

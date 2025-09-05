@@ -4,8 +4,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.keyboard.reply import UserButtons
-from db import User
+from bot.keyboard.reply import UserButtons, DriverButtons
+from db import User, Driver
 from utils.services import greeting_user
 
 command_router = Router()
@@ -34,6 +34,22 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}
 Tanlang: 👇''', reply_markup=rkb.as_markup(resize_keyboard=True))
+
+
+
+@command_router.message(Command(commands='driver_info'), StateFilter(None))
+async def driver_info_command_handler(message: Message):
+    rkb = ReplyKeyboardBuilder(
+        [[KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER), KeyboardButton(text=DriverButtons.CHANGE_CAR_BRAND)],
+          KeyboardButton(text=DriverButtons.CHANGE_IMAGE), KeyboardButton(text=DriverButtons.BACK)])
+
+    driver = await Driver.get(message.from_user.id)
+    await message.answer(f'''🏎 Car brand: {driver.car_brand}
+🔢 Car_number: {driver.car_number}
+🏞 Driver_image: {driver.image}
+Tanlash: ''',reply_markup=rkb.as_markup(resize_keyboard=True))
+
+
 
 # @command_router.message(Command(commands='help'))
 # async def help_command_handler(message: Message) -> None:
