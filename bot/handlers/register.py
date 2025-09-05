@@ -3,9 +3,9 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
-from sqlalchemy.util import await_only
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 
+from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import phone_number_rkb, UserButtons
 from bot.states.user import UserStates, DriverStates
 from db import User, Driver
@@ -46,18 +46,20 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
         'phone_number': phone_number,
     })
     await User.update(message.from_user.id, **user_data)
-    # if message.from_user.id in conf.bot.get_admin_list:
-    #     await back_admin_menu_handler(message, state)
-    #     return
     await greeting_user(message)
     await state.clear()
 
 
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
-    if driver := await Driver.get(message.from_user.id):
-        msg = f'<a href="">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
+    if driver := (await Driver.filter(Driver.user_id == message.from_user.id)):
+        driver = driver[0]
+        msg = f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
         await message.answer_photo(driver.image, caption=msg)
+        await message.answer(
+            f'Hurmatli <a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> taxi bo\'lib ishlashni xoxlaysizmi',
+            reply_markup=RequestDrivingButtons.get_markup())
+        return
 
     await state.update_data(user_id=message.from_user.id)
     await message.answer("Rasmingizni kiriting",
@@ -118,3 +120,11 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     driver_data = await state.get_data()
     await Driver.create(**driver_data)
 
+
+@register_router.callback_query(F.data.startswith('reject_driving'))
+async def handle_reject_driving_input(callback: CallbackQuery) -> None:
+    driver = (await Driver.filter(Driver.user_id == callback.from_user.id))
+    if driver:
+        await Driver.delete(driver[0].id)
+    await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
+    await callback.message.delete()

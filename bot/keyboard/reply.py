@@ -11,6 +11,7 @@ class UserButtons:
     BACK = "🔙 Orqaga"
     ORDER_HISTORY = "📝 Buyurtmalar tarixi"
 
+
 class DriverButtons:
     START_WORK = "Ishni boshlash"
     FINISH_WORK = "Ishni tugatish"
@@ -19,6 +20,11 @@ class DriverButtons:
     CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
     CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
 
+
+class AdminButtons:
+    GET_CHAT_ID = "🆔 Chat ID ni ko‘rish"
+    MANAGE_DRIVERS = "🚖 Haydovchilarni boshqarish"
+    STATISTICS = "📊 Statistika"
 
 
 def main_keyboard_btn(**kwargs) -> ReplyKeyboardBuilder:

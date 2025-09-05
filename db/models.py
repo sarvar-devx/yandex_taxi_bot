@@ -9,7 +9,6 @@ class User(TimeBaseModel):
     first_name: Mapped[str] = mapped_column(String(64))
     last_name: Mapped[str] = mapped_column(String(64), nullable=True)
     phone_number: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
-    user_type: Mapped[str] = mapped_column(String(10), default="client")
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False)
@@ -18,7 +17,7 @@ class User(TimeBaseModel):
 class Driver(TimeBaseModel):
     image: Mapped[str] = mapped_column(String(255))
     car_brand: Mapped[str] = mapped_column(String(255))
-    car_number: Mapped[str] = mapped_column(String(8))
+    car_number: Mapped[str] = mapped_column(String(11))
     license_term: Mapped[str] = mapped_column(String(255))
     car_type: Mapped[str] = mapped_column(String(50), nullable=True)
     has_permission: Mapped[bool] = mapped_column(Boolean, default=False)

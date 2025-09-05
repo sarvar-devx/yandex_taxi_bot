@@ -9,12 +9,13 @@ inline button
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-class DriverRequestButtons:
-    CONFIRM = InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="confirm_driver")
-    REJECT = InlineKeyboardButton(text="❌ Rad etish", callback_data="reject_driver")
+class RequestDrivingButtons:
+    CONFIRM = InlineKeyboardButton(text="✅ Ha men taxi bo'lmoqchiman 🚖", callback_data="confirm_driving")
+    REJECTION = InlineKeyboardButton(text="❌ Rad etish", callback_data="reject_driving")
 
     @staticmethod
     def get_markup():
         return InlineKeyboardMarkup(inline_keyboard=[
-            [DriverRequestButtons.CONFIRM, DriverRequestButtons.REJECT]
+            [RequestDrivingButtons.CONFIRM],
+            [RequestDrivingButtons.REJECTION]
         ])
