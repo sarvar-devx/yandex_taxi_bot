@@ -11,18 +11,19 @@ from utils.services import greeting_user
 command_router = Router()
 
 
-@command_router.message(CommandStart(),  StateFilter(None))
+@command_router.message(CommandStart(), StateFilter(None))
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await greeting_user(message)
     await state.clear()
 
 
-@command_router.message(Command(commands='cancel'),  StateFilter(None))
+@command_router.message(Command(commands='cancel'), StateFilter(None))
 async def command_cancel_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Bekor qilindi')
     await state.clear()
 
-@command_router.message(Command(commands='myinfo'),  StateFilter(None))
+
+@command_router.message(Command(commands='myinfo'), StateFilter(None))
 async def myinfo_command_handler(message: Message) -> None:
     rkb = ReplyKeyboardBuilder(
         [[KeyboardButton(text=UserButtons.CHANGE_FIRST_NAME), KeyboardButton(text=UserButtons.CHANGE_LAST_NAME)],
@@ -33,12 +34,6 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}
 Tanlang: 👇''', reply_markup=rkb.as_markup(resize_keyboard=True))
-
-
-
-
-
-
 
 # @command_router.message(Command(commands='help'))
 # async def help_command_handler(message: Message) -> None:

@@ -27,13 +27,17 @@ class AdminButtons:
     STATISTICS = "📊 Statistika"
 
 
-def main_keyboard_btn(**kwargs) -> ReplyKeyboardBuilder:
+def main_keyboard_btn() -> ReplyKeyboardBuilder:
     main_keyboard = ReplyKeyboardBuilder()
-    main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_TAXI, **kwargs))
-    main_keyboard.row(KeyboardButton(text=UserButtons.OPERATOR, **kwargs))
-    main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_HISTORY, **kwargs))
+    main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_TAXI))
+    main_keyboard.row(KeyboardButton(text=UserButtons.OPERATOR))
+    main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_HISTORY))
     main_keyboard.adjust(2, repeat=True)
     return main_keyboard
+
+
+def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
+    pass
 
 
 phone_number_rkb = ReplyKeyboardMarkup(
