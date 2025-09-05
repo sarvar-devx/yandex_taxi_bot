@@ -1,7 +1,8 @@
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, ReplyKeyboardRemove, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard.reply import UserButtons
@@ -51,6 +52,13 @@ async def change_last_name_handler(message: Message, state: FSMContext) -> None:
         f"Hurmatli <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a> sizning familiyangiz {message.text.title()} ga uzgartirildi!")
     await myinfo_command_handler(message)
     await state.clear()
+
+
+@user_router.message(F.text == UserButtons.ORDER_TAXI)
+async def order_taxi(message: Message) -> None:
+    location = ReplyKeyboardBuilder()
+    location.add(KeyboardButton(text="Manzilni yuborish 📍", request_location=True))
+    await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=location.as_markup())
 
 # @user_router.message(F.text == UserButtons.BECOME_DRIVER)
 # async def become_driver_handler(message: Message):
