@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.filters.checker import IsDriver
-from bot.keyboard.reply import DriverButtons
+from bot.keyboard.reply import DriverButtons, driver_keyboard_btn
 from bot.states.user import DriverUpdateStates
 from database import Driver
 
@@ -34,3 +34,8 @@ async def change_car_brand_handler(message: Message, state: FSMContext):
 @driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_CAR_NUMBER, StateFilter(None))
 async def update_car_number_handler(message: Message, state: FSMContext):
     ...
+
+
+@driver_router.message(StateFilter(None))
+async def default_handler(message: Message) -> None:
+    await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
