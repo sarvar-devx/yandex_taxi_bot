@@ -15,7 +15,14 @@ class ChangeNameStates(StatesGroup):
 
 
 class DriverStates(StatesGroup):
-    user_id = State()
+    id = State()
+    image = State()
+    car_brand = State()
+    car_number = State()
+    license_term = State()
+
+
+class DriverUpdateStates(StatesGroup):
     image = State()
     car_brand = State()
     car_number = State()
@@ -25,4 +32,3 @@ class DriverStates(StatesGroup):
 class OrderTaxiStates(StatesGroup):
     user_id = State()
     order_type = State()
-
