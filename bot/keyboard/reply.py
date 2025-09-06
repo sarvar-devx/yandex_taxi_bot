@@ -1,8 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from database import Driver
-
 
 class UserButtons:
     ORDER_TAXI = "🚕 Taxi buyurtma qilish"

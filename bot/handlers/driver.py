@@ -3,6 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
+from bot.filters.checker import IsDriver
 from bot.keyboard.reply import DriverButtons
 from bot.states.user import DriverUpdateStates
 from database import Driver
@@ -10,7 +11,7 @@ from database import Driver
 driver_router = Router()
 
 
-@driver_router.message(F.text == DriverButtons.CHANGE_CAR_BRAND, StateFilter(None))
+@driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_CAR_BRAND, StateFilter(None))
 async def update_car_brand_handler(message: Message, state: FSMContext):
     await message.answer("📝 Yangi model nomini kiriting", reply_markup=ReplyKeyboardRemove())
     await state.set_state(DriverUpdateStates.car_brand)
