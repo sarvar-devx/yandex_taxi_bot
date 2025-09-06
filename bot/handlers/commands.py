@@ -17,12 +17,6 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.clear()
 
 
-@command_router.message(Command(commands='cancel'), StateFilter(None))
-async def command_cancel_handler(message: Message, state: FSMContext) -> None:
-    await message.answer('Bekor qilindi')
-    await state.clear()
-
-
 @command_router.message(Command(commands='myinfo'), StateFilter(None))
 async def myinfo_command_handler(message: Message) -> None:
     rkb = ReplyKeyboardBuilder(
