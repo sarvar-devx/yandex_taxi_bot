@@ -15,7 +15,7 @@ from utils.services import validate_name_input
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
-user_router.callback_query(IsCustomer())
+user_router.callback_query.filter(IsCustomer())
 
 
 @user_router.message(F.text == UserButtons.CHANGE_FIRST_NAME, StateFilter(None))
