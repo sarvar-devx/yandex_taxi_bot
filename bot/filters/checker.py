@@ -14,7 +14,7 @@ class IsAdmin(Filter):
 class IsDriver(Filter):
 
     async def __call__(self, message: Message) -> bool:
-        driver = await Driver.get(message.from_user.id)
+        driver = await Driver.get_or_none(user_id=message.from_user.id)
         return True if driver else False
 
 

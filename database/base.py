@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import delete as sqlalchemy_delete, update as sqlalchemy_update, select, func, BigInteger, \
     DateTime
@@ -92,6 +93,13 @@ class AbstractClass:
             query = query.options(selectinload(relationship))
 
         return (await db.execute(query)).scalars().all()
+
+    @classmethod
+    async def get_or_none(cls, **filters) -> Optional["AbstractClass"]:
+        query = select(cls).filter_by(**filters).limit(1)
+        result = await db.execute(query)
+        return result.scalar_one_or_none()
+
 
     @classmethod
     async def count_by(cls, criteria):
