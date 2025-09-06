@@ -5,7 +5,7 @@ from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.keyboard.reply import UserButtons
-from db import User
+from database import User
 from utils.services import greeting_user
 
 command_router = Router()

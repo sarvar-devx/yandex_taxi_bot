@@ -2,7 +2,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 from aiogram.types.update import Update
 
-from db import User
+from database import User
 from utils.services import send_first_name
 
 

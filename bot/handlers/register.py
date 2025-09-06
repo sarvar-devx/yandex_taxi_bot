@@ -8,7 +8,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, Callback
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import phone_number_rkb, UserButtons
 from bot.states.user import UserStates, DriverStates
-from db import User, Driver
+from database import User, Driver
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user
 
