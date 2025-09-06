@@ -32,7 +32,7 @@ async def myinfo_command_handler(message: Message) -> None:
         rkb = driver_info_keyboard_btn()
         driver = driver[0]
         user_photo = driver.image
-        msg += F"""\n🏎 Mashina rusimi: {driver.car_brand}
+        msg += F"""\n🏎 Mashina rusumi: {driver.car_brand}
 🔢 Mashina raqami: <b><tg-spoiler>{driver.car_number}</tg-spoiler></b>"""
         if driver.has_permission:
             msg += f"Mashina toifasi {driver.car_type}"
