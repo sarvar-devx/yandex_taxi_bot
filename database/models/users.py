@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.base import TimeBaseModel
 
+
 class User(TimeBaseModel):
     username: Mapped[str] = mapped_column(String(255), nullable=True)
     first_name: Mapped[str] = mapped_column(String(64))
