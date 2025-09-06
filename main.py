@@ -20,7 +20,6 @@ from config import conf
 async def on_start(bot: Bot):
     user_commands = [
         BotCommand(command='start', description="🏁 Bo'tni ishga tushirish"),
-        BotCommand(command='cancel', description="❌ Bekor qilish"),
         BotCommand(command='myinfo', description="📝 Mening malumotlarim"),
         BotCommand(command='help', description="🆘 yordam"),
     ]

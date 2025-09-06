@@ -5,11 +5,10 @@ from bot.filters.checker import IsAdmin
 
 admin_router = Router()
 
+admin_router.message.filter(IsAdmin())
+admin_router.callback_query.filter(IsAdmin())
 
-#
-# admin_router.message.filter(IsAdminFilter())
-# admin_router.callback_query.filter(IsAdminFilter())
 
-@admin_router.message(IsAdmin())
+@admin_router.message()
 async def admin_handler(message: Message) -> None:
     await message.answer("Salom admin !!!")
