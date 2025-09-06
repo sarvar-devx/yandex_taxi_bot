@@ -20,3 +20,9 @@ class DriverStates(StatesGroup):
     car_brand = State()
     car_number = State()
     license_term = State()
+
+
+class OrderTaxiStates(StatesGroup):
+    user_id = State()
+    order_type = State()
+

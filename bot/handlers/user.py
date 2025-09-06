@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard.reply import UserButtons
 from bot.states.user import ChangeNameStates
-from db import User
+from database import User
 from utils.services import validate_name_input
 
 user_router = Router()
@@ -59,6 +59,9 @@ async def order_taxi(message: Message) -> None:
     location = ReplyKeyboardBuilder()
     location.add(KeyboardButton(text="Manzilni yuborish 📍", request_location=True))
     await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=location.as_markup())
+
+
+
 
 # @user_router.message(F.text == UserButtons.BECOME_DRIVER)
 # async def become_driver_handler(message: Message):
