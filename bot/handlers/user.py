@@ -60,9 +60,6 @@ async def order_taxi(message: Message) -> None:
     location.add(KeyboardButton(text="Manzilni yuborish 📍", request_location=True))
     await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=location.as_markup())
 
-
-
-
 # @user_router.message(F.text == UserButtons.BECOME_DRIVER)
 # async def become_driver_handler(message: Message):
 #
