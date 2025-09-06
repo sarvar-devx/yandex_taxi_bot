@@ -1,23 +1,13 @@
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.base import TimeBaseModel
-
-
-class User(TimeBaseModel):
-    username: Mapped[str] = mapped_column(String(255), nullable=True)
-    first_name: Mapped[str] = mapped_column(String(64))
-    last_name: Mapped[str] = mapped_column(String(64), nullable=True)
-    phone_number: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
-    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False)
+from database.base import TimeBaseModel
 
 
 class Driver(TimeBaseModel):
     image: Mapped[str] = mapped_column(String(255))
     car_brand: Mapped[str] = mapped_column(String(255))
-    car_number: Mapped[str] = mapped_column(String(11))
+    car_number: Mapped[str] = mapped_column(String(15))
     license_term: Mapped[str] = mapped_column(String(255))
     car_type: Mapped[str] = mapped_column(String(50), nullable=True)
     has_permission: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -27,6 +17,7 @@ class Driver(TimeBaseModel):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     user: Mapped["User"] = relationship("User", back_populates="driver_profile")
     location: Mapped["DriverLocation"] = relationship("DriverLocation", back_populates="driver", uselist=False)
+    orders: Mapped[list["OrderTaxi"]] = relationship("OrderTaxi", back_populates="driver")
 
 
 class DriverLocation(TimeBaseModel):

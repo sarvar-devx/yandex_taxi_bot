@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard.reply import UserButtons
 from bot.states.user import ChangeNameStates
-from db import User
+from database import User
 from utils.services import validate_name_input
 
 user_router = Router()
