@@ -11,5 +11,5 @@ class User(TimeBaseModel):
     phone_number: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False)
+    driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False, lazy="selectin")
     orders: Mapped[list["OrderTaxi"]] = relationship("OrderTaxi", back_populates="user")
