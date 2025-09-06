@@ -8,6 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 
 from bot.handlers.commands import command_router
+from bot.handlers.driver import driver_router
 from bot.handlers.main import main_router
 from bot.handlers.register import register_router
 from bot.handlers.user import user_router
@@ -38,7 +39,8 @@ async def main_polling():
         main_router,
         register_router,
         command_router,
-        user_router
+        user_router,
+        driver_router
     )
     bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     await dp.start_polling(bot)
