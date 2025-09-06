@@ -84,7 +84,7 @@ async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> N
         return
 
     await state.update_data(image=message.photo[-1].file_id)
-    await message.answer("Moshina rusmini kiriting: ")
+    await message.answer("Mashina rusmini kiriting: ")
     await state.set_state(DriverStates.car_brand)
 
 
@@ -126,6 +126,7 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     await state.update_data(license_term=message.text)
     driver_data = await state.get_data()
     await Driver.create(**driver_data)
+    await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
     await state.clear()
 
 
