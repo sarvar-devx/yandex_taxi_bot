@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from db import Driver
+from database import Driver
 
 
 class UserButtons:
@@ -17,7 +17,7 @@ class UserButtons:
 class DriverButtons:
     START_WORK = "Ishni boshlash"
     FINISH_WORK = "Ishni tugatish"
-    CHANGE_CAR_BRAND = "Mashina nomini o'zgartirish"
+    CHANGE_CAR_BRAND = "Mashina brendini o'zgartirish"
     CHANGE_CAR_NUMBER = "Mashina raqamini o'zgartirish"
     CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
     CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
