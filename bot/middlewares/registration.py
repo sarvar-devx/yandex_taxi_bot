@@ -2,7 +2,8 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 from aiogram.types.update import Update
 
-from database import User
+from bot.handlers.register import become_to_driver
+from database import User, Driver
 from utils.services import send_first_name
 
 
@@ -23,3 +24,6 @@ class RegistrationMiddleware(BaseMiddleware):
             return
 
         return await handler(update, data)
+
+
+

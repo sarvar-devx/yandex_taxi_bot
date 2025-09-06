@@ -14,9 +14,11 @@ from database import User, OrderTaxi
 from utils.services import validate_name_input
 
 user_router = Router()
+user_router.message.filter(IsCustomer())
+user_router.callback_query(IsCustomer())
 
 
-@user_router.message(IsCustomer(), F.text == UserButtons.CHANGE_FIRST_NAME, StateFilter(None))
+@user_router.message(F.text == UserButtons.CHANGE_FIRST_NAME, StateFilter(None))
 async def send_first_name_handler(message: Message, state: FSMContext) -> None:
     await message.answer("✍️ <b>Ismingizni kiriting</b>", reply_markup=ReplyKeyboardRemove())
     await state.set_state(ChangeNameStates.first_name)
