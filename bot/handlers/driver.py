@@ -42,9 +42,12 @@ async def update_car_number_handler(message: Message, state: FSMContext):
 
 @driver_router.message(DriverUpdateStates.car_number)
 async def change_car_number_handler(message: Message, state: FSMContext):
-    pattern = r'^(01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s[A-Z]{1}\s\d{3}\s[A-Z]{2}$'
+    pattern = r'^(?:01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s(?:[A-Z]{1}\s\d{3}\s[A-Z]{2}|\d{3}\s[A-Z]{3})$'
     if not re.match(pattern, message.text.upper()):
-        await message.answer(f"Xatolik iltimos qaytadan jiriting \nMisol: <b>01 A 123 AB</b> ko'rinishida")
+        await message.answer(
+            "❌ Xatolik! Iltimos qaytadan kiriting.\n\n"
+            "Misol: <b>01 A 123 AB</b> yoki <b>10 123 ABS</b> ko‘rinishida"
+        )
         await state.set_state(DriverUpdateStates.car_number)
         return
 
