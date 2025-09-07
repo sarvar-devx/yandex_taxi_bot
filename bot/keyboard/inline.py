@@ -35,3 +35,18 @@ def user_order_type():
             )
         )
     return ikb.as_markup()
+
+
+def make_inline_keyboard(buttons: list[tuple[str, str]], row_width: int = 2):
+    ikb = InlineKeyboardBuilder()
+    for text, data in buttons:
+        ikb.add(InlineKeyboardButton(text=text, callback_data=data))
+    ikb.adjust(row_width)
+    return ikb.as_markup()
+
+# ISHLATILISHI
+
+# driver_offer_kb = make_inline_keyboard([
+#     ("✅ Qabul qilaman", "driver_accept"),
+#     ("❌ Rad etaman", "driver_decline")
+# ])

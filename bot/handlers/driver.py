@@ -34,7 +34,7 @@ async def change_car_brand_handler(message: Message, state: FSMContext):
     await state.clear()
 
 
-@driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_CAR_NUMBER, StateFilter(None))
+@driver_router.message(F.text == DriverButtons.CHANGE_CAR_NUMBER, StateFilter(None))
 async def update_car_number_handler(message: Message, state: FSMContext):
     await message.answer("🔢  Yangi raqamni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.car_number)
@@ -54,7 +54,7 @@ async def change_car_number_handler(message: Message, state: FSMContext):
     await state.clear()
 
 
-@driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_LICENSE_TERM, StateFilter(None))
+@driver_router.message(F.text == DriverButtons.CHANGE_LICENSE_TERM, StateFilter(None))
 async def update_taxi_license(message: Message, state: FSMContext):
     await message.answer("🧾 Litsenziyani yangilash", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.license_term)
@@ -73,7 +73,7 @@ async def change_taxi_license(message: Message, state: FSMContext):
     await state.clear()
 
 
-@driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_IMAGE, StateFilter(None))
+@driver_router.message(F.text == DriverButtons.CHANGE_IMAGE, StateFilter(None))
 async def update_driver_image(message: Message, state: FSMContext):
     await message.answer("🗿 Yangi rasmni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.image)
