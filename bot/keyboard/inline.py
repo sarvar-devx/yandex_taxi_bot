@@ -6,7 +6,11 @@ inline button
 [malumotni tasdiqlayman admin korib chiqishi uchun] [yoq men driverlikdan bosh tortaman]
 
 """
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+from database import Driver
 
 
 class RequestDrivingButtons:
@@ -19,3 +23,15 @@ class RequestDrivingButtons:
             [RequestDrivingButtons.CONFIRM],
             [RequestDrivingButtons.REJECTION]
         ])
+
+
+def user_order_type():
+    ikb = InlineKeyboardBuilder()
+    for car in Driver.CarType:
+        ikb.add(
+            InlineKeyboardButton(
+                text=car.value.capitalize(),
+                callback_data=car.value
+            )
+        )
+    return ikb.as_markup()

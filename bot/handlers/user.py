@@ -1,55 +1,83 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, KeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters.checker import IsCustomer
-from bot.keyboard.reply import UserButtons
+from bot.keyboard.inline import user_order_type
+from bot.keyboard.reply import UserButtons, get_location
 from bot.states.user import OrderTaxiStates
 from bot.utils.coordinate import get_nearest_driver
-from database import OrderTaxi
+from database import OrderTaxi, User, Driver
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
 user_router.callback_query.filter(IsCustomer())
 
 
-# @user_router.message(F.text == UserButtons.GET_CHAT_ID)
-# async def get_my_id(message: Message):
-#     await message.answer(f"Chat_id: <code>{message.chat.id}</code>")
-
-
 @user_router.message(F.text == UserButtons.ORDER_TAXI)
 async def order_taxi(message: Message, state: FSMContext) -> None:
-    location = ReplyKeyboardBuilder()
-    location.add(KeyboardButton(text="Manzilni yuborish 📍", request_location=True))
-    await state.set_state(OrderTaxiStates.map)
+    """
+    Start taxi order process:
+    - Set state to `location`
+    - Ask user to send location
+    """
+    await state.set_state(OrderTaxiStates.location)
+    await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=get_location())
 
-    await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=location.as_markup(resize_keyboard=True))
 
-
-@user_router.message(OrderTaxiStates.map, F.location)
-async def order_map(message: Message, state: FSMContext, session: AsyncSession) -> None:
+@user_router.message(OrderTaxiStates.location, F.location)
+async def order_location(message: Message, state: FSMContext) -> None:
+    """
+    Handle user location:
+    - Save latitude & longitude
+    - Set state to `order_type`
+    - Ask user to choose car type
+    """
     lat, lon = message.location.latitude, message.location.longitude
     await state.update_data(latitude=lat, longitude=lon)
+    await state.set_state(OrderTaxiStates.order_type)
+    await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
+    await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type())
 
-    nearest_driver, distance = await get_nearest_driver(session, lat, lon)
+
+@user_router.callback_query(OrderTaxiStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
+async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
+    """
+    Handle car type selection:
+    - Save selected type
+    - Find nearest driver
+    - Show driver info with photo
+    """
+    await state.update_data(order_type=callback.data)
+    data = await state.get_data()
+    nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])
 
     if nearest_driver:
-        await state.update_data(driver_id=nearest_driver.id, user_id=message.from_user.id)
-        await message.reply(
-            f"Sizga eng yaqin haydovchi topildi 🚖\n"
-            f"Driver: {nearest_driver.name}\n"
-            f"Masofa: {distance:.2f} km"
+        user = await User.get(id_=callback.from_user.id)
+
+        await state.update_data(
+            driver_id=nearest_driver,
+            user_id=user.id
         )
-        # keyingi bosqichga o'tkazish
-        # await state.set_state(OrderTaxiStates.finish)
+        driver = await Driver.get(id_=nearest_driver)
+        driver_user_table = await User.get(id_=driver.user_id)
+        caption = (
+            f"<strong>Sizga eng yaqin haydovchi topildi ! 🚖 </strong>\n"
+            f"<b>Haydovchi:</b> <i>{driver_user_table.first_name} {driver_user_table.last_name}</i>\n"
+            f"<b>Mashina:</b> <i>{driver.car_brand} ({driver.car_number})</i>\n"
+            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km"
+        )
+
+        await callback.message.answer_photo(photo=f'{driver.image}', caption=caption)
+
     else:
-        await message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
+        await callback.message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
 
 
 @user_router.message(F.text == UserButtons.ORDER_HISTORY)
 async def order_history(message: Message) -> None:
+    """
+    Show user's taxi order history
+    """
     user_history = await OrderTaxi.get(message.from_user.id)
     await message.answer("Hozircha mavjud emas NEW UPDATE TO NIGHT !!!")

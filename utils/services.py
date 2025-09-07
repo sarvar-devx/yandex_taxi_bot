@@ -5,12 +5,14 @@ from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.keyboard.reply import main_keyboard_btn
 from bot.states.user import UserStates
+from database import Driver
 
 
 async def greeting_user(message: Message):
+    driver_exists: bool = bool(await Driver.get(user_id=message.from_user.id))
     await message.answer(
         f"<b>👋 Assalomu alaykum <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>, botimizga xush kelibsiz.</b>",
-        reply_markup=main_keyboard_btn().as_markup(resize_keyboard=True))
+        reply_markup=main_keyboard_btn(is_driver=driver_exists).as_markup(resize_keyboard=True))
 
 
 async def wrong_first_last_name(message: Message) -> None:

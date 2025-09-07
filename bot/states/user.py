@@ -30,6 +30,9 @@ class DriverUpdateStates(StatesGroup):
 
 
 class OrderTaxiStates(StatesGroup):
-    map = State()
+    location = State()
+    latitude = State()
+    longitude = State()
+    order_type = State()
     driver_id = State()
     user_id = State()

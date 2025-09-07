@@ -76,9 +76,13 @@ class AbstractClass:
         await cls.commit()
 
     @classmethod
-    async def get(cls, id_):
-        query = select(cls).where(cls.id == id_)
-        return (await db.execute(query)).scalar()
+    async def get(cls, id_=None, user_id=None):
+        if id_:
+            query = select(cls).where(cls.id == id_)
+            return (await db.execute(query)).scalars().first()
+        else:
+            query = select(cls).where(cls.user_id == user_id)
+            return (await db.execute(query)).scalars().first()
 
     @classmethod
     async def delete(cls, id_):
@@ -99,7 +103,6 @@ class AbstractClass:
         query = select(cls).filter_by(**filters).limit(1)
         result = await db.execute(query)
         return result.scalar_one_or_none()
-
 
     @classmethod
     async def count_by(cls, criteria):

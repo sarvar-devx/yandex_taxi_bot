@@ -4,18 +4,17 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.filters.checker import IsDriver
-from bot.keyboard.reply import UserButtons, driver_info_keyboard_btn, driver_keyboard_btn
+from bot.keyboard.reply import UserButtons, driver_info_keyboard_btn
 from database import User, Driver
 from utils.services import greeting_user
 
 command_router = Router()
 
 
-@command_router.message(IsDriver(), CommandStart(), StateFilter(None))
-async def d_command_start_handler(message: Message, state: FSMContext) -> None:
-    await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
-    await state.clear()
+# @command_router.message(IsDriver(), CommandStart(), StateFilter(None))
+# async def d_command_start_handler(message: Message, state: FSMContext) -> None:
+#     await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
+#     await state.clear()
 
 
 @command_router.message(CommandStart(), StateFilter(None))

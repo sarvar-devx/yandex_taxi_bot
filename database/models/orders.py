@@ -11,8 +11,8 @@ class OrderTaxi(TimeBaseModel):
     class OrderType(Enum):
         START = "start"
         COMFORT = "comfort"
-        COMFORT_PLUS = "comfort_plus"
-        ELECTRIC = "electric"
+        # COMFORT_PLUS = "comfort_plus"
+        # ELECTRIC = "electric"
         BUSINESS = "business"
         PREMIER = "premier"
 
