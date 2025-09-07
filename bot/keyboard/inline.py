@@ -25,6 +25,22 @@ class RequestDrivingButtons:
         ])
 
 
+class DriverInfoInlineKeyboardButtons:
+    CHANGE_CAR_BRAND = InlineKeyboardButton(text="Mashina brendini o'zgartirish", callback_data="change_car_brand")
+    CHANGE_CAR_NUMBER = InlineKeyboardButton(text="Mashina raqamini o'zgartirish", callback_data="change_car_number")
+    CHANGE_LICENSE_TERM = InlineKeyboardButton(text="Litsenziyani o'zgartirish", callback_data="change_license_term")
+    CHANGE_IMAGE = InlineKeyboardButton(text="Haydovchi rasmini ozgartirish", callback_data="change_image")
+
+    @staticmethod
+    def get_markup():
+        return InlineKeyboardMarkup(inline_keyboard=[
+            [DriverInfoInlineKeyboardButtons.CHANGE_CAR_NUMBER],
+            [DriverInfoInlineKeyboardButtons.CHANGE_CAR_BRAND],
+            [DriverInfoInlineKeyboardButtons.CHANGE_LICENSE_TERM],
+            [DriverInfoInlineKeyboardButtons.CHANGE_IMAGE],
+        ])
+
+
 def user_order_type():
     ikb = InlineKeyboardBuilder()
     for car in Driver.CarType:

@@ -90,7 +90,7 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
         await state.set_state(DriverStates.car_brand)
         return
 
-    await state.update_data(car_brand=message.text.upper())
+    await state.update_data(car_brand=message.text)
     await message.answer("Mashina raqamini kiriting")
     await state.set_state(DriverStates.car_number)
 
@@ -104,7 +104,7 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
         await state.set_state(DriverStates.car_number)
         return
 
-    await state.update_data(car_number=message.text)
+    await state.update_data(car_number=message.text.upper())
     await message.answer("Yandex litsenziya id raqamini kiriting:")
     await state.set_state(DriverStates.license_term)
 
