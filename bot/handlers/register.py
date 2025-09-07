@@ -72,12 +72,8 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
 # Haydovchi rasmini qabul qilib avto rusumini saqlash buttoniga yonaltrish
 @register_router.message(DriverStates.image)
 async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> None:
-    if not message.photo:
-        await message.answer("Iltimos, faqat rasm yuboring.")
-        return
-
-    if not await has_face(bot, message.photo[-1].file_id):
-        await message.answer("bu rasmda odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
+    if (not message.photo) or not await has_face(bot, message.photo[-1].file_id):
+        await message.answer("Rasm yoki odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
         await state.set_state(DriverStates.image)
         return
 

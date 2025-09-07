@@ -81,13 +81,8 @@ async def update_driver_image(message: Message, state: FSMContext):
 
 @driver_router.message(DriverUpdateStates.image)
 async def change_driver_image(message: Message, state: FSMContext, bot: Bot):
-    if not message.photo:
-        await message.answer("Iltimos, faqat rasm yuboring.")
-        await state.set_state(DriverUpdateStates.image)
-        return
-
-    if not await has_face(bot, message.photo[-1].file_id):
-        await message.answer("bu rasmda odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
+    if (not message.photo) or not await has_face(bot, message.photo[-1].file_id):
+        await message.answer("Rasm yoki odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
         await state.set_state(DriverUpdateStates.image)
         return
 
