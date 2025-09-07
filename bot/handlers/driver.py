@@ -53,16 +53,12 @@ async def change_car_number_handler(message: Message, state: FSMContext):
     await message.answer(f"✅ Mashina raqami {message.text} ga ozgartirildi !")
     await state.clear()
 
+
 @driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_LICENSE_TERM, StateFilter(None))
 async def update_taxi_license(message: Message, state: FSMContext):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=UserButtons.BACK)]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("🧾 Litsenziyani yangilash", reply_markup=keyboard)
+    await message.answer("🧾 Litsenziyani yangilash", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.license_term)
+
 
 @driver_router.message(DriverUpdateStates.license_term)
 async def change_taxi_license(message: Message, state: FSMContext):
@@ -72,21 +68,16 @@ async def change_taxi_license(message: Message, state: FSMContext):
         return
 
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
-    await Driver.update(driver.id ,license_term=message.text)
+    await Driver.update(driver.id, license_term=message.text)
     await message.answer(f"✅ Litsenziya yangilandi")
     await state.clear()
 
 
 @driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_IMAGE, StateFilter(None))
 async def update_driver_image(message: Message, state: FSMContext):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=UserButtons.BACK)]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("🗿 Yangi rasmni kiriting", reply_markup=keyboard)
+    await message.answer("🗿 Yangi rasmni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.image)
+
 
 @driver_router.message(DriverUpdateStates.image)
 async def change_driver_image(message: Message, state: FSMContext, bot: Bot):
