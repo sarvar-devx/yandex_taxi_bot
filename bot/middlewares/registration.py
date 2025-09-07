@@ -1,11 +1,8 @@
-from typing import Callable, Dict, Any, Awaitable
-
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 from aiogram.types.update import Update
 
 from database import User
-from database.base import db, AsyncSession
 from utils.services import send_first_name
 
 
@@ -26,17 +23,3 @@ class RegistrationMiddleware(BaseMiddleware):
             return
 
         return await handler(update, data)
-
-
-class DbSessionMiddleware(BaseMiddleware):
-    async def __call__(
-            self,
-            handler: Callable[[Any, Dict[str, Any]], Awaitable[Any]],
-            event: Any,
-            data: Dict[str, Any]
-    ) -> Any:
-        async with db._engine.begin() as conn:  # engine orqali ishlash emas, balki session ochish kerak
-            async with db._engine.connect() as connection:
-                async with AsyncSession(bind=connection) as session:
-                    data["session"] = session
-                    return await handler(event, data)

@@ -1,3 +1,6 @@
+from enum import Enum
+
+from sqlalchemy import Enum as SqlAlchemyEnum
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -5,11 +8,19 @@ from database.base import TimeBaseModel
 
 
 class Driver(TimeBaseModel):
+    class CarType(Enum):
+        START = "start"
+        COMFORT = "comfort"
+        # COMFORT_PLUS = "comfort_plus"
+        # ELECTRIC = "electric"
+        BUSINESS = "business"
+        PREMIER = "premier"
+
     image: Mapped[str] = mapped_column(String(255))
     car_brand: Mapped[str] = mapped_column(String(255))
     car_number: Mapped[str] = mapped_column(String(15))
     license_term: Mapped[str] = mapped_column(String(255))
-    car_type: Mapped[str] = mapped_column(String(50), nullable=True)
+    car_type: Mapped[SqlAlchemyEnum] = mapped_column(SqlAlchemyEnum(CarType), default=CarType.START)
     has_permission: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     has_client: Mapped[bool] = mapped_column(Boolean, default=False)

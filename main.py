@@ -27,7 +27,8 @@ async def on_start(bot: Bot):
 
 
 async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
-    await bot.delete_my_commands()
+    pass
+    # await bot.delete_my_commands()
 
 
 async def main_polling():
@@ -36,9 +37,9 @@ async def main_polling():
     dp.update.middleware(RegistrationMiddleware())
     dp.shutdown.register(on_shutdown)
     dp.include_routers(
+        command_router,
         main_router,
         register_router,
-        command_router,
         user_router,
         driver_router,
         admin_router

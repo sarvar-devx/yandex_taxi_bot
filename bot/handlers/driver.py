@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from bot.filters.checker import IsDriver
-from bot.keyboard.reply import DriverButtons, driver_keyboard_btn, back_button_markup
+from bot.keyboard.reply import DriverButtons, back_button_markup, get_location
 from bot.states.user import DriverUpdateStates
 from database import Driver, DriverLocation
 from utils.face_detect import has_face
@@ -96,7 +96,7 @@ async def change_driver_image(message: Message, state: FSMContext, bot: Bot):
 async def driver_start(message: Message, state: FSMContext):
     await message.answer(
         "Assalomu alaykum, haydovchi!\nIltimos, lokatsiyangizni yuboring 📍",
-        reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True)
+        reply_markup=get_location()
     )
     await state.set_state("driver_location")
 
