@@ -119,7 +119,7 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
 @register_router.message(DriverStates.license_term)
 async def handle_license_input(message: Message, state: FSMContext) -> None:
     if not message.text:
-        await message.answer(f"Xatolik litsenziya IDda str va raqam kiritiladi")
+        await message.answer(f"Xatolik litsenziya ID da str va raqam kiritiladi")
         await state.set_state(DriverStates.license_term)
         return
 
