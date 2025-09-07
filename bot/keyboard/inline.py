@@ -4,8 +4,8 @@ f'<a href="">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {drive
 
 inline button
 [malumotni tasdiqlayman admin korib chiqishi uchun] [yoq men driverlikdan bosh tortaman]
-
 """
+
 from aiogram.types import InlineKeyboardButton
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder

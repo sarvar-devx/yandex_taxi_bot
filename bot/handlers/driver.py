@@ -65,8 +65,8 @@ async def update_taxi_license(callback: CallbackQuery, state: FSMContext):
 
 @driver_router.message(DriverUpdateStates.license_term)
 async def change_taxi_license(message: Message, state: FSMContext):
-    if not message.text:
-        await message.answer(f"Xatolik litsenziya ID da str va raqam kiritiladi")
+    if not re.match(r'^[A-Z]{2}\d{6}$', message.text):
+        await message.answer("❌ Noto‘g‘ri format! Litsenziya ko'rinishi \nMasalan: KA123456")
         await state.set_state(DriverUpdateStates.license_term)
         return
 
