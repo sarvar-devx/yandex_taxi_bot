@@ -112,16 +112,16 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
 # Litsenziyani qabul qiladi qiymat bolsa boldi True qaytarad
 @register_router.message(DriverStates.license_term)
 async def handle_license_input(message: Message, state: FSMContext) -> None:
-    if not message.text:
-        await message.answer(f"Xatolik litsenziya ID da str va raqam kiritiladi")
+    if not re.match(r'^[A-Z]{2}\d{6}$', message.text):
+        await message.answer("❌ Noto‘g‘ri format! Litsenziya ko'rinishi \nMasalan: KA123456")
         await state.set_state(DriverStates.license_term)
-        return
+    else:
+        await state.update_data(license_term=message.text)
+        driver_data = await state.get_data()
+        await Driver.create(**driver_data)
+        await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
+        await state.clear()
 
-    await state.update_data(license_term=message.text)
-    driver_data = await state.get_data()
-    await Driver.create(**driver_data)
-    await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
-    await state.clear()
 
 
 # Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
