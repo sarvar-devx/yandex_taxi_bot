@@ -3,10 +3,10 @@ import re
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message
 
 from bot.filters.checker import IsDriver
-from bot.keyboard.reply import DriverButtons, driver_keyboard_btn, UserButtons, back_button, back_button_markup
+from bot.keyboard.reply import DriverButtons, driver_keyboard_btn, back_button_markup
 from bot.states.user import DriverUpdateStates
 from database import Driver
 
