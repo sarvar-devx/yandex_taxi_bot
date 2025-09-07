@@ -3,7 +3,7 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
@@ -72,12 +72,8 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
 # Haydovchi rasmini qabul qilib avto rusumini saqlash buttoniga yonaltrish
 @register_router.message(DriverStates.image)
 async def handle_image_input(message: Message, state: FSMContext, bot: Bot) -> None:
-    if not message.photo:
-        await message.answer("Iltimos, faqat rasm yuboring.")
-        return
-
-    if not await has_face(bot, message.photo[-1].file_id):
-        await message.answer("bu rasmda odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
+    if (not message.photo) or not await has_face(bot, message.photo[-1].file_id):
+        await message.answer("Rasm yoki odam yuzi aniqlanmadi\nIltimos o'z rasmingizni yuboring")
         await state.set_state(DriverStates.image)
         return
 
@@ -117,7 +113,7 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
 @register_router.message(DriverStates.license_term)
 async def handle_license_input(message: Message, state: FSMContext) -> None:
     if not message.text:
-        await message.answer(f"Xatolik litsenziya IDda str va raqam kiritiladi")
+        await message.answer(f"Xatolik litsenziya ID da str va raqam kiritiladi")
         await state.set_state(DriverStates.license_term)
         return
 
