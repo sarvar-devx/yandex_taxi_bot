@@ -7,12 +7,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import TimeBaseModel
 
 
-class OrderTaxi(TimeBaseModel):
+class Order(TimeBaseModel):
     class OrderType(Enum):
         START = "start"
         COMFORT = "comfort"
-        # COMFORT_PLUS = "comfort_plus"
-        # ELECTRIC = "electric"
         BUSINESS = "business"
         PREMIER = "premier"
 
