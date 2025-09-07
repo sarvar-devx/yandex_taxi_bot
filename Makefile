@@ -6,7 +6,9 @@ down-migrate:
 	alembic downgrade
 
 current-mig:
-	alembic current
+	alembic revision --autogenerate -m "add Star model"
+	alembic upgrade head
+
 
 celery:
 	celery -A core.celery worker --loglevel=info

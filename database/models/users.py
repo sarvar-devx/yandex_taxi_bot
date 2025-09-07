@@ -12,4 +12,6 @@ class User(TimeBaseModel):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False, lazy="selectin")
-    orders: Mapped[list["OrderTaxi"]] = relationship("OrderTaxi", back_populates="user")
+    orders: Mapped[list["Order"]] = relationship("Order", back_populates="user")
+    comments = relationship("Comment", back_populates="user")
+

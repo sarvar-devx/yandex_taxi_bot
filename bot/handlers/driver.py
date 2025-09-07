@@ -3,10 +3,10 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 
 from bot.filters.checker import IsDriver
-from bot.keyboard.reply import DriverButtons, back_button_markup, get_location
+from bot.keyboard.reply import back_button_markup, get_location
 from bot.states.user import DriverUpdateStates
 from database import Driver, DriverLocation
 from utils.face_detect import has_face
@@ -16,9 +16,10 @@ driver_router.message.filter(IsDriver())
 driver_router.callback_query.filter(IsDriver())
 
 
-@driver_router.message(F.text == DriverButtons.CHANGE_CAR_BRAND, StateFilter(None))
-async def update_car_brand_handler(message: Message, state: FSMContext):
-    await message.answer("📝 Yangi model nomini kiriting", reply_markup=back_button_markup)
+@driver_router.callback_query(F.data.startswith('change_car_brand'), StateFilter(None))
+async def update_car_brand_handler(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.answer("📝 Yangi model nomini kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.car_brand)
 
 
@@ -34,9 +35,10 @@ async def change_car_brand_handler(message: Message, state: FSMContext):
     await state.clear()
 
 
-@driver_router.message(F.text == DriverButtons.CHANGE_CAR_NUMBER, StateFilter(None))
-async def update_car_number_handler(message: Message, state: FSMContext):
-    await message.answer("🔢  Yangi raqamni kiriting", reply_markup=back_button_markup)
+@driver_router.callback_query(F.data.startswith('change_car_number'), StateFilter(None))
+async def update_car_number_handler(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.answer("🔢  Yangi raqamni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.car_number)
 
 
@@ -52,14 +54,15 @@ async def change_car_number_handler(message: Message, state: FSMContext):
         return
 
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
-    await Driver.update(driver.id, car_number=message.text)
+    await Driver.update(driver.id, car_number=message.text.upper())
     await message.answer(f"✅ Mashina raqami {message.text} ga ozgartirildi !")
     await state.clear()
 
 
-@driver_router.message(F.text == DriverButtons.CHANGE_LICENSE_TERM, StateFilter(None))
-async def update_taxi_license(message: Message, state: FSMContext):
-    await message.answer("🧾 Litsenziyani yangilash", reply_markup=back_button_markup)
+@driver_router.callback_query(F.data.startswith("change_license_term"), StateFilter(None))
+async def update_taxi_license(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.answer("🧾 Litsenziyani yangilash", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.license_term)
 
 
@@ -76,9 +79,10 @@ async def change_taxi_license(message: Message, state: FSMContext):
     await state.clear()
 
 
-@driver_router.message(F.text == DriverButtons.CHANGE_IMAGE, StateFilter(None))
-async def update_driver_image(message: Message, state: FSMContext):
-    await message.answer("🗿 Yangi rasmni kiriting", reply_markup=back_button_markup)
+@driver_router.callback_query(F.data.startswith("change_image"), StateFilter(None))
+async def update_driver_image(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.answer("🗿 Yangi rasmni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.image)
 
 
@@ -114,5 +118,5 @@ async def driver_send_location(message: Message, state: FSMContext):
         longitude=lon
     )
 
-    await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖")
+    await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖", reply_markup=ReplyKeyboardRemove())
     await state.clear()

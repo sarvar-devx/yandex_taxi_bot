@@ -16,10 +16,6 @@ class DriverButtons:
     GO = "Boshlash"
     START_WORK = "Ishni boshlash"
     FINISH_WORK = "Ishni tugatish"
-    CHANGE_CAR_BRAND = "Mashina brendini o'zgartirish"
-    CHANGE_CAR_NUMBER = "Mashina raqamini o'zgartirish"
-    CHANGE_LICENSE_TERM = "Litsenziyani o'zgartirish"
-    CHANGE_IMAGE = "Haydovchi rasmini ozgartirish"
 
 
 class AdminButtons:
@@ -30,8 +26,12 @@ class AdminButtons:
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
     main_keyboard = ReplyKeyboardBuilder()
-    main_keyboard.row(KeyboardButton(text=DriverButtons.GO)) if is_driver else main_keyboard.row(
-        KeyboardButton(text=UserButtons.ORDER_TAXI))
+    if is_driver:
+        main_keyboard.row(KeyboardButton(text=DriverButtons.GO))
+    else:
+        main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_TAXI))
+        main_keyboard.row(KeyboardButton(text=UserButtons.BECOME_DRIVER))
+
     main_keyboard.row(KeyboardButton(text=UserButtons.OPERATOR))
     main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_HISTORY))
     main_keyboard.adjust(2, repeat=True)
@@ -42,19 +42,6 @@ def driver_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard = ReplyKeyboardBuilder()
     driver_keyboard.row(KeyboardButton(text=DriverButtons.START_WORK, request_location=True))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
-    return driver_keyboard
-
-
-def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
-    driver_keyboard = ReplyKeyboardBuilder()
-    driver_keyboard.row(KeyboardButton(text=UserButtons.CHANGE_FIRST_NAME))
-    driver_keyboard.row(KeyboardButton(text=UserButtons.CHANGE_LAST_NAME))
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_IMAGE))
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_BRAND))
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_CAR_NUMBER))
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.CHANGE_LICENSE_TERM))
-    driver_keyboard.row(KeyboardButton(text=UserButtons.BACK))
-    driver_keyboard.adjust(2, repeat=True)
     return driver_keyboard
 
 

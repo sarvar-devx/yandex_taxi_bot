@@ -1,17 +1,28 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters.checker import IsCustomer
 from bot.keyboard.inline import user_order_type
 from bot.keyboard.reply import UserButtons, get_location
-from bot.states.user import OrderTaxiStates
-from bot.utils.coordinate import get_nearest_driver
-from database import OrderTaxi, User, Driver
+from bot.states.user import OrderStates
+from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
+from database import Order, User, Driver
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
 user_router.callback_query.filter(IsCustomer())
+
+
+@user_router.callback_query(F.data.startswith("confirm_driving"))
+async def confirm_driving(callback: CallbackQuery, bot: Bot):
+    await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
+    await callback.message.edit_reply_markup()
+    admins = await User.filter(User.is_admin)
+
+    for admin in admins:
+        await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
+        await bot.send_message(admin.id, "Driver malumotlarini teskshirib driver lik huquqini bering")
 
 
 @user_router.message(F.text == UserButtons.ORDER_TAXI)
@@ -21,11 +32,11 @@ async def order_taxi(message: Message, state: FSMContext) -> None:
     - Set state to `location`
     - Ask user to send location
     """
-    await state.set_state(OrderTaxiStates.location)
+    await state.set_state(OrderStates.location)
     await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=get_location())
 
 
-@user_router.message(OrderTaxiStates.location, F.location)
+@user_router.message(OrderStates.location, F.location)
 async def order_location(message: Message, state: FSMContext) -> None:
     """
     Handle user location:
@@ -35,12 +46,12 @@ async def order_location(message: Message, state: FSMContext) -> None:
     """
     lat, lon = message.location.latitude, message.location.longitude
     await state.update_data(latitude=lat, longitude=lon)
-    await state.set_state(OrderTaxiStates.order_type)
+    await state.set_state(OrderStates.order_type)
     await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
     await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type())
 
 
-@user_router.callback_query(OrderTaxiStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
+@user_router.callback_query(OrderStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Handle car type selection:
@@ -65,7 +76,8 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
             f"<strong>Sizga eng yaqin haydovchi topildi ! 🚖 </strong>\n"
             f"<b>Haydovchi:</b> <i>{driver_user_table.first_name} {driver_user_table.last_name}</i>\n"
             f"<b>Mashina:</b> <i>{driver.car_brand} ({driver.car_number})</i>\n"
-            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km"
+            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km\n"
+            f"<strong>Taxminiy kelish vaqti:</strong> <tg-spoiler>{await calculate_arrival_time(distance)}</tg-spoiler>"
         )
 
         await callback.message.answer_photo(photo=f'{driver.image}', caption=caption)
@@ -79,5 +91,5 @@ async def order_history(message: Message) -> None:
     """
     Show user's taxi order history
     """
-    user_history = await OrderTaxi.get(message.from_user.id)
+    user_history = await Order.get(message.from_user.id)
     await message.answer("Hozircha mavjud emas NEW UPDATE TO NIGHT !!!")

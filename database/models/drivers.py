@@ -1,6 +1,6 @@
 from enum import Enum
 
-from sqlalchemy import Enum as SqlAlchemyEnum
+from sqlalchemy import Enum as SqlAlchemyEnum, Integer
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -11,8 +11,6 @@ class Driver(TimeBaseModel):
     class CarType(Enum):
         START = "start"
         COMFORT = "comfort"
-        # COMFORT_PLUS = "comfort_plus"
-        # ELECTRIC = "electric"
         BUSINESS = "business"
         PREMIER = "premier"
 
@@ -28,7 +26,9 @@ class Driver(TimeBaseModel):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     user: Mapped["User"] = relationship("User", back_populates="driver_profile")
     location: Mapped["DriverLocation"] = relationship("DriverLocation", back_populates="driver", uselist=False)
-    orders: Mapped[list["OrderTaxi"]] = relationship("OrderTaxi", back_populates="driver")
+    orders: Mapped[list["Order"]] = relationship("Order", back_populates="driver")
+    comments = relationship("Comment", back_populates="driver")
+    stars = relationship("Star", secondary="comments", viewonly=True, back_populates=None)
 
 
 class DriverLocation(TimeBaseModel):
@@ -37,3 +37,21 @@ class DriverLocation(TimeBaseModel):
 
     latitude: Mapped[float] = mapped_column(Float)
     longitude: Mapped[float] = mapped_column(Float)
+
+
+class Comment(TimeBaseModel):
+    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    driver = relationship("Driver", back_populates="comments")
+    user = relationship("User", back_populates="comments")
+    stars = relationship("Star", back_populates="comment", cascade="all, delete-orphan")
+
+
+class Star(TimeBaseModel):
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id"))
+    value: Mapped[int] = mapped_column(Integer(), default=3)
+
+    comment = relationship("Comment", back_populates="stars")
