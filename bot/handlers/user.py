@@ -5,9 +5,9 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from bot.filters.checker import IsCustomer
 from bot.keyboard.inline import user_order_type
 from bot.keyboard.reply import UserButtons, get_location
-from bot.states.user import OrderTaxiStates
+from bot.states.user import OrderStates
 from bot.utils.coordinate import get_nearest_driver
-from database import OrderTaxi, User, Driver
+from database import Order, User, Driver
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
@@ -21,11 +21,11 @@ async def order_taxi(message: Message, state: FSMContext) -> None:
     - Set state to `location`
     - Ask user to send location
     """
-    await state.set_state(OrderTaxiStates.location)
+    await state.set_state(OrderStates.location)
     await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=get_location())
 
 
-@user_router.message(OrderTaxiStates.location, F.location)
+@user_router.message(OrderStates.location, F.location)
 async def order_location(message: Message, state: FSMContext) -> None:
     """
     Handle user location:
@@ -35,12 +35,12 @@ async def order_location(message: Message, state: FSMContext) -> None:
     """
     lat, lon = message.location.latitude, message.location.longitude
     await state.update_data(latitude=lat, longitude=lon)
-    await state.set_state(OrderTaxiStates.order_type)
+    await state.set_state(OrderStates.order_type)
     await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
     await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type())
 
 
-@user_router.callback_query(OrderTaxiStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
+@user_router.callback_query(OrderStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Handle car type selection:
@@ -79,5 +79,5 @@ async def order_history(message: Message) -> None:
     """
     Show user's taxi order history
     """
-    user_history = await OrderTaxi.get(message.from_user.id)
+    user_history = await Order.get(message.from_user.id)
     await message.answer("Hozircha mavjud emas NEW UPDATE TO NIGHT !!!")

@@ -29,7 +29,7 @@ class DriverUpdateStates(StatesGroup):
     license_term = State()
 
 
-class OrderTaxiStates(StatesGroup):
+class OrderStates(StatesGroup):
     location = State()
     latitude = State()
     longitude = State()

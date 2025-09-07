@@ -11,8 +11,6 @@ class Driver(TimeBaseModel):
     class CarType(Enum):
         START = "start"
         COMFORT = "comfort"
-        # COMFORT_PLUS = "comfort_plus"
-        # ELECTRIC = "electric"
         BUSINESS = "business"
         PREMIER = "premier"
 
@@ -28,7 +26,7 @@ class Driver(TimeBaseModel):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     user: Mapped["User"] = relationship("User", back_populates="driver_profile")
     location: Mapped["DriverLocation"] = relationship("DriverLocation", back_populates="driver", uselist=False)
-    orders: Mapped[list["OrderTaxi"]] = relationship("OrderTaxi", back_populates="driver")
+    orders: Mapped[list["Order"]] = relationship("Order", back_populates="driver")
 
 
 class DriverLocation(TimeBaseModel):
