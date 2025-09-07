@@ -3,7 +3,7 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 
 from bot.filters.checker import IsDriver
 from bot.keyboard.reply import back_button_markup, get_location
@@ -115,5 +115,5 @@ async def driver_send_location(message: Message, state: FSMContext):
         longitude=lon
     )
 
-    await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖")
+    await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖", reply_markup=ReplyKeyboardRemove())
     await state.clear()

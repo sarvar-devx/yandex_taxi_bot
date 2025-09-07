@@ -26,3 +26,25 @@ async def get_nearest_driver(lat: float, lon: float):
             nearest_driver = driver_loc.driver_id
 
     return nearest_driver, min_distance
+
+async def calculate_arrival_time(distance: float) -> str:
+    """
+    Masofaga qarab taxminiy kelish vaqtini hisoblaydi.
+    :param distance: km
+    :return: vaqt string ko‘rinishda ("7 daqiqa", "1 soat 15 daqiqa")
+    """
+    average_speed = 50  # km/h
+    time_minutes = (distance / average_speed) * 60
+
+    minutes = int(round(time_minutes))
+    if minutes < 60:
+        return f"{minutes} daqiqa"
+    else:
+        hours = minutes // 60
+        mins = minutes % 60
+        return f"{hours} soat {mins} daqiqa"
+
+
+
+
+

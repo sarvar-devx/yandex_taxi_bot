@@ -6,7 +6,7 @@ from bot.filters.checker import IsCustomer
 from bot.keyboard.inline import user_order_type
 from bot.keyboard.reply import UserButtons, get_location
 from bot.states.user import OrderStates
-from bot.utils.coordinate import get_nearest_driver
+from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from database import Order, User, Driver
 
 user_router = Router()
@@ -65,7 +65,8 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
             f"<strong>Sizga eng yaqin haydovchi topildi ! 🚖 </strong>\n"
             f"<b>Haydovchi:</b> <i>{driver_user_table.first_name} {driver_user_table.last_name}</i>\n"
             f"<b>Mashina:</b> <i>{driver.car_brand} ({driver.car_number})</i>\n"
-            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km"
+            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km\n"
+            f"<strong>Taxminiy kelish vaqti:</strong> <tg-spoiler>{await calculate_arrival_time(distance)}</tg-spoiler>"
         )
 
         await callback.message.answer_photo(photo=f'{driver.image}', caption=caption)
