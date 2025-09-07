@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from bot.keyboard.inline import RequestDrivingButtons
-from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
+from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup, main_keyboard_btn
 from bot.states.user import UserStates, DriverStates
 from database import User, Driver
 from utils.face_detect import has_face
@@ -120,7 +120,7 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
     await state.update_data(license_term=message.text)
     driver_data = await state.get_data()
     await Driver.create(**driver_data)
-    await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
+    await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>", reply_markup=main_keyboard_btn(is_driver=True).as_markup(resize_keyboard=True))
     await state.clear()
 
 

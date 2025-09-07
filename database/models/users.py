@@ -13,3 +13,5 @@ class User(TimeBaseModel):
 
     driver_profile: Mapped["Driver"] = relationship("Driver", back_populates="user", uselist=False, lazy="selectin")
     orders: Mapped[list["Order"]] = relationship("Order", back_populates="user")
+    comments = relationship("Comment", back_populates="user")
+
