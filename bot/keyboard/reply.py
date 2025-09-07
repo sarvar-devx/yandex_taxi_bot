@@ -58,3 +58,5 @@ def driver_info_keyboard_btn() -> ReplyKeyboardBuilder:
 
 phone_number_rkb = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text='📞 Telefon raqamni yuborish', request_contact=True)]], resize_keyboard=True)
+
+back_button_markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=UserButtons.BACK)]], resize_keyboard=True)

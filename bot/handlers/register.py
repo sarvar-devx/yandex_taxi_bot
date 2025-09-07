@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 
 from bot.keyboard.inline import RequestDrivingButtons
-from bot.keyboard.reply import phone_number_rkb, UserButtons
+from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
 from bot.states.user import UserStates, DriverStates
 from database import User, Driver
 from utils.face_detect import has_face
@@ -65,9 +65,7 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
         return
 
     await state.update_data(user_id=message.from_user.id)
-    await message.answer("Rasmingizni kiriting",
-                         reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=UserButtons.BACK)]],
-                                                          resize_keyboard=True))
+    await message.answer("Rasmingizni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverStates.image)
 
 

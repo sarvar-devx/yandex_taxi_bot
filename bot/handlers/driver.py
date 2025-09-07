@@ -3,10 +3,10 @@ import re
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from bot.filters.checker import IsDriver
-from bot.keyboard.reply import DriverButtons, driver_keyboard_btn, UserButtons
+from bot.keyboard.reply import DriverButtons, driver_keyboard_btn, UserButtons, back_button, back_button_markup
 from bot.states.user import DriverUpdateStates
 from database import Driver
 
@@ -17,13 +17,7 @@ driver_router.callback_query.filter(IsDriver())
 
 @driver_router.message(F.text == DriverButtons.CHANGE_CAR_BRAND, StateFilter(None))
 async def update_car_brand_handler(message: Message, state: FSMContext):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=UserButtons.BACK)]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("📝 Yangi model nomini kiriting", reply_markup=keyboard)
+    await message.answer("📝 Yangi model nomini kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.car_brand)
 
 
@@ -41,13 +35,7 @@ async def change_car_brand_handler(message: Message, state: FSMContext):
 
 @driver_router.message(IsDriver(), F.text == DriverButtons.CHANGE_CAR_NUMBER, StateFilter(None))
 async def update_car_number_handler(message: Message, state: FSMContext):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=UserButtons.BACK)]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("🔢  Yangi raqamni kiriting", reply_markup=keyboard)
+    await message.answer("🔢  Yangi raqamni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverUpdateStates.car_number)
 
 
