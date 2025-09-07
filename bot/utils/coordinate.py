@@ -1,8 +1,5 @@
 import math
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from database import DriverLocation
 
 
@@ -16,17 +13,16 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c  # km
 
 
-async def get_nearest_driver(session: AsyncSession, lat: float, lon: float):
-    result = await session.execute(select(DriverLocation))
-    drivers = result.scalars().all()
+async def get_nearest_driver(lat: float, lon: float):
+    drivers_locations = await DriverLocation.all()
 
     nearest_driver = None
     min_distance = float("inf")
 
-    for driver in drivers:
-        dist = haversine(lat, lon, driver.latitude, driver.longitude)
+    for driver_loc in drivers_locations:
+        dist = haversine(lat, lon, driver_loc.latitude, driver_loc.longitude)
         if dist < min_distance:
             min_distance = dist
-            nearest_driver = driver
+            nearest_driver = driver_loc.driver_id
 
     return nearest_driver, min_distance

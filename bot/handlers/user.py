@@ -1,14 +1,13 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, KeyboardButton
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardRemove
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.filters.checker import IsCustomer
 from bot.keyboard.reply import UserButtons
 from bot.states.user import OrderTaxiStates
 from bot.utils.coordinate import get_nearest_driver
-from database import OrderTaxi
+from database import OrderTaxi, User, Driver
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
@@ -30,21 +29,31 @@ async def order_taxi(message: Message, state: FSMContext) -> None:
 
 
 @user_router.message(OrderTaxiStates.map, F.location)
-async def order_map(message: Message, state: FSMContext, session: AsyncSession) -> None:
+async def order_map(message: Message, state: FSMContext) -> None:
     lat, lon = message.location.latitude, message.location.longitude
     await state.update_data(latitude=lat, longitude=lon)
 
-    nearest_driver, distance = await get_nearest_driver(session, lat, lon)
+    nearest_driver, distance = await get_nearest_driver(lat, lon)
 
     if nearest_driver:
-        await state.update_data(driver_id=nearest_driver.id, user_id=message.from_user.id)
-        await message.reply(
-            f"Sizga eng yaqin haydovchi topildi 🚖\n"
-            f"Driver: {nearest_driver.name}\n"
-            f"Masofa: {distance:.2f} km"
+        user = await User.get(id_=message.from_user.id)
+
+        await state.update_data(
+            driver_id=nearest_driver,
+            user_id=user.id
         )
-        # keyingi bosqichga o'tkazish
+        driver = await Driver.get(id_=nearest_driver)
+        driver_user_table = await User.get(id_=driver.user_id)
+        caption = (
+            f"<strong>Sizga eng yaqin haydovchi topildi ! 🚖 </strong>\n"
+            f"<b>Haydovchi:</b> <i>{driver_user_table.first_name} {driver_user_table.last_name}</i>\n"
+            f"<b>Mashina:</b> <i>{driver.car_brand} ({driver.car_number})</i>\n"
+            f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km"
+        )
+
+        await message.answer_photo(photo=f'{driver.image}', caption=caption, reply_markup=ReplyKeyboardRemove())
         # await state.set_state(OrderTaxiStates.finish)
+
     else:
         await message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
 

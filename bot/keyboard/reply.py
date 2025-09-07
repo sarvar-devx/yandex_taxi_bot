@@ -38,7 +38,7 @@ def main_keyboard_btn() -> ReplyKeyboardBuilder:
 
 def driver_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard = ReplyKeyboardBuilder()
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.START_WORK))
+    driver_keyboard.row(KeyboardButton(text=DriverButtons.START_WORK, request_location=True))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
     return driver_keyboard
 
