@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
@@ -12,6 +12,17 @@ from database import Order, User, Driver
 user_router = Router()
 user_router.message.filter(IsCustomer())
 user_router.callback_query.filter(IsCustomer())
+
+
+@user_router.callback_query(F.data.startswith("confirm_driving"))
+async def confirm_driving(callback: CallbackQuery, bot: Bot):
+    await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
+    await callback.message.edit_reply_markup()
+    admins = await User.filter(User.is_admin)
+
+    for admin in admins:
+        await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
+        await bot.send_message(admin.id, "Driver malumotlarini teskshirib driver lik huquqini bering")
 
 
 @user_router.message(F.text == UserButtons.ORDER_TAXI)

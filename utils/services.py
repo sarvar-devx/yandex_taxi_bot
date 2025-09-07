@@ -9,10 +9,10 @@ from database import Driver
 
 
 async def greeting_user(message: Message):
-    driver_exists: bool = bool(await Driver.get(user_id=message.from_user.id))
+    is_driver: bool = bool(await Driver.filter((Driver.user_id == message.from_user.id) & (Driver.has_permission)))
     await message.answer(
         f"<b>👋 Assalomu alaykum <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>, botimizga xush kelibsiz.</b>",
-        reply_markup=main_keyboard_btn(is_driver=driver_exists).as_markup(resize_keyboard=True))
+        reply_markup=main_keyboard_btn(is_driver=is_driver).as_markup(resize_keyboard=True))
 
 
 async def wrong_first_last_name(message: Message) -> None:

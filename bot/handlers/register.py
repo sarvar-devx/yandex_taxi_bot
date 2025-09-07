@@ -58,10 +58,9 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
     if driver := await Driver.filter(Driver.user_id == message.from_user.id):
         driver = driver[0]
         msg = f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
-        await message.answer_photo(driver.image, caption=msg)
-        await message.answer(
-            f'Hurmatli <a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> taxi bo\'lib ishlashni xoxlaysizmi',
-            reply_markup=RequestDrivingButtons.get_markup())
+        await message.answer_photo(driver.image,
+                                   caption=msg + f'\nHurmatli <a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> taxi bo\'lib ishlashni xoxlaysizmi',
+                                   reply_markup=RequestDrivingButtons.get_markup())
         return
 
     await state.update_data(user_id=message.from_user.id)
@@ -121,7 +120,6 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
         await Driver.create(**driver_data)
         await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
         await state.clear()
-
 
 
 # Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi

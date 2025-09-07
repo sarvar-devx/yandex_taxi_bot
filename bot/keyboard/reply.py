@@ -26,8 +26,12 @@ class AdminButtons:
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
     main_keyboard = ReplyKeyboardBuilder()
-    main_keyboard.row(KeyboardButton(text=DriverButtons.GO)) if is_driver else main_keyboard.row(
-        KeyboardButton(text=UserButtons.ORDER_TAXI))
+    if is_driver:
+        main_keyboard.row(KeyboardButton(text=DriverButtons.GO))
+    else:
+        main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_TAXI))
+        main_keyboard.row(KeyboardButton(text=UserButtons.BECOME_DRIVER))
+
     main_keyboard.row(KeyboardButton(text=UserButtons.OPERATOR))
     main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_HISTORY))
     main_keyboard.adjust(2, repeat=True)
