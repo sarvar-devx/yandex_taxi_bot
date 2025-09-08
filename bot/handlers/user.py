@@ -4,7 +4,7 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters.checker import IsCustomer
 from bot.keyboard.inline import user_order_type
-from bot.keyboard.reply import UserButtons, get_location
+from bot.keyboard.reply import UserButtons, get_location, back_button_markup
 from bot.states.user import OrderStates
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from database import Order, User, Driver
@@ -49,7 +49,7 @@ async def order_location(message: Message, state: FSMContext) -> None:
     await state.set_state(OrderStates.order_type)
     await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
     await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type())
-
+    # await message.answer(text="🔙 Orqaga", reply_markup=back_button_markup)
 
 @user_router.callback_query(OrderStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:

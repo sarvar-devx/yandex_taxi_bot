@@ -94,7 +94,7 @@ async def handle_car_brande_input(message: Message, state: FSMContext) -> None:
     await state.set_state(DriverStates.car_number)
 
 
-# Driver Tel raqamini qabul qilib litsenziyaga yonaltrish
+# Driver mashina raqamini qabul qilib litsenziyaga yonaltrish
 @register_router.message(DriverStates.car_number)
 async def handle_car_number_input(message: Message, state: FSMContext) -> None:
     pattern = r'^(?:01|10|20|25|30|40|50|60|70|75|80|85|90|95)\s(?:[A-Z]{1}\s\d{3}\s[A-Z]{2}|\d{3}\s[A-Z]{3})$'

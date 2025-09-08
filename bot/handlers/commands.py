@@ -41,7 +41,7 @@ async def myinfo_command_handler(message: Message) -> None:
         msg += F"""\n🏎 Mashina rusumi: {driver.car_brand}
 🔢 Mashina raqami: <b><tg-spoiler>{driver.car_number}</tg-spoiler></b>"""
         if driver.has_permission:
-            msg += f"Mashina toifasi {driver.car_type}"
+            msg += f"\nMashina toifasi: <b><i><u> {driver.car_type.value.title()} </u></i></b>"
         await message.answer_photo(driver.image, caption=msg + "\nTanlang: 👇", reply_markup=ikb)
         await message.answer("Tanlang", reply_markup=rkb.as_markup(resize_keyboard=True))
         return
