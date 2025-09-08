@@ -15,6 +15,13 @@ class IsDriver(Filter):
 
     async def __call__(self, message: Message) -> bool:
         driver = await Driver.get_or_none(user_id=message.from_user.id)
+        return driver is not None
+
+
+class DriverHasPermission(Filter):
+
+    async def __call__(self, message: Message) -> bool:
+        driver = await Driver.get_or_none(user_id=message.from_user.id)
         return driver is not None and driver.has_permission
 
 
