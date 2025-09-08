@@ -69,7 +69,6 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
             f"<strong>Masofa:</strong> <tg-spoiler>{distance:.2f}</tg-spoiler> km\n"
             f"<strong>Taxminiy kelish vaqti:</strong> <tg-spoiler>{await calculate_arrival_time(distance)}</tg-spoiler>"
         )
-
         await callback.message.answer_photo(photo=f'{driver.image}', caption=caption)
 
     else:

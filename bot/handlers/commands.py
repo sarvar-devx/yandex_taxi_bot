@@ -6,7 +6,8 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.filters.checker import IsDriver
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
-from bot.keyboard.reply import UserButtons, driver_keyboard_btn
+from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons
+from bot.states.user import DriverUpdateStates
 from database import User, Driver
 from utils.services import greeting_user
 
@@ -51,15 +52,29 @@ async def myinfo_command_handler(message: Message) -> None:
 
     # 📊 Buyurtmalar soni: {await TestAnswer.count_by(TestAnswer.user_id == user.id)} ta
 
-# @command_router.message(Command(commands='help'))
-# async def help_command_handler(message: Message) -> None:
-#     await message.answer(F'''Buyruqlar:
-# /start - Siz bu buyruq bilan botni ishga tushirasiz \n
-# /myinfo - Uzingizning malumotlaringizni yangilaysiz \n
-# /help - Botning vazifalarini tushinish\n
-# Tugmalar:
-# <i>{UserButtons.CHECK_ANSWER}</i> - Botga kiritilgan testlarni javoblarini kiritish\n
-# <i>{UserButtons.ADMIN}</i> - Admin bilan bog'lanish \n
-# <i>{UserButtons.REFERRAL_USER}</i> - Do'stlaringizni taklif qiling va bot sizga OLIMPIADA boʻladigan kanal uchun bir martalik link beradi\n
-# <i>Agar sizda qandaydir muammo bulsa yoki savollaringiz bulsa <a href='https://t.me/Xumoyun_a'>Admin</a> ga murojat qiling</i>
-# ''')
+@command_router.message(Command(commands='help'), StateFilter(None))
+async def help_command_handler(message: Message) -> None:
+    await message.answer(F'''Buyruqlar:
+/start - Siz bu buyruq bilan botni ishga tushirasiz \n
+/myinfo - Uzingizning malumotlaringizni yangilaysiz \n
+/help - Botning vazifalarini tushinish\n
+Tugmalar:
+<i>{UserButtons.ORDER_TAXI}</i> - O'zinggizga taksi buyurtma qilish \n
+<i>{UserButtons.OPERATOR}</i> - Admin bilan bog'lanish \n
+<i>{UserButtons.CHANGE_FIRST_NAME}</i> - Botda o'z ismingizni ozgartirish\n
+<i>{UserButtons.CHANGE_LAST_NAME}</i> - Botda o'z familiyangizni ozgartirish\n
+<i>{UserButtons.BECOME_DRIVER}</i> - Haydovchi taksist sifatda ishlash\n
+<i>{UserButtons.ORDER_HISTORY}</i> - Buyurtmalar tarixini korish\n
+<i>{DriverButtons.GO}</i> - Botdan foyalanishni boshlash\n
+<i>{DriverButtons.START_WORK}</i> - Taksist sifatida ishni boshlash\n
+<i>{DriverButtons.FINISH_WORK}</i> - Taksist sifatida ishni tugatish\n
+<i>Agar sizda qandaydir muammo bulsa yoki savollaringiz bulsa <a href='https://t.me/Bewrlius_py'>Admin</a> ga murojat qiling</i>
+''')
+
+"""
+     = State()
+    car_brand = State()
+    car_number = State()
+    license_term = State()
+
+"""
