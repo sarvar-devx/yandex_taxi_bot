@@ -3,7 +3,7 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
@@ -122,14 +122,6 @@ async def handle_license_input(message: Message, state: FSMContext) -> None:
         driver_data = await state.get_data()
         await Driver.create(**driver_data)
         await message.answer(f"<b>Ma'lumotlar muvaffaqiyatli saqlandi</b>")
+        await become_to_driver(message, state)
+        await message.answer("Malumotlaringizni tugmani bosish orqali tasdiqlaing 👆")
         await state.clear()
-
-
-# Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
-@register_router.callback_query(F.data.startswith('reject_driving'))
-async def handle_reject_driving_input(callback: CallbackQuery) -> None:
-    driver = (await Driver.filter(Driver.user_id == callback.from_user.id))
-    if driver:
-        await Driver.delete(driver[0].id)
-    await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
-    await callback.message.delete()

@@ -6,15 +6,38 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.checker import IsDriver
+from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import back_button_markup
 from bot.states.user import DriverUpdateStates
-from database import Driver
+from database import Driver, User
 from utils.face_detect import has_face
 
 driver_info_router = Router()
 
 driver_info_router.message.filter(IsDriver())
 driver_info_router.callback_query.filter(IsDriver())
+
+
+@driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.CONFIRM.callback_data))
+async def confirm_driving(callback: CallbackQuery, bot: Bot):
+    await callback.message.edit_reply_markup()
+    admins = await User.filter(User.is_admin)
+
+    for admin in admins:
+        await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
+        await bot.send_message(admin.id, "Driver malumotlarini teskshirib driver lik huquqini bering")
+
+    await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
+
+
+# Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
+@driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.REJECTION.callback_data))
+async def handle_reject_driving_input(callback: CallbackQuery) -> None:
+    driver = (await Driver.filter(Driver.user_id == callback.from_user.id))
+    if driver:
+        await Driver.delete(driver[0].id)
+    await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
+    await callback.message.delete()
 
 
 @driver_info_router.callback_query(F.data.startswith('change_car_brand'), StateFilter(None))
