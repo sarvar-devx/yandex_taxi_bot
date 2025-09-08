@@ -33,6 +33,15 @@ class DriverInfoInlineKeyboardButtons:
         ])
 
 
+def drivers_list(drivers) -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardBuilder()
+
+    for driver in drivers:
+        ikb.row(InlineKeyboardButton(text=driver.user.first_name, callback_data=F"driver_id: {driver.user_id}"))
+    ikb.adjust(2)
+    return ikb.as_markup()
+
+
 def user_order_type():
     ikb = InlineKeyboardBuilder()
     for car in Driver.CarType:

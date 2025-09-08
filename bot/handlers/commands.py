@@ -4,17 +4,16 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.filters.checker import IsDriver
+from bot.filters.checker import DriverHasPermission
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
 from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons
-from bot.states.user import DriverUpdateStates
 from database import User, Driver
 from utils.services import greeting_user
 
 command_router = Router()
 
 
-@command_router.message(IsDriver(), CommandStart(), StateFilter(None))
+@command_router.message(DriverHasPermission(), CommandStart(), StateFilter(None))
 async def d_command_start_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
     await state.clear()
@@ -52,6 +51,7 @@ async def myinfo_command_handler(message: Message) -> None:
 
     # 📊 Buyurtmalar soni: {await TestAnswer.count_by(TestAnswer.user_id == user.id)} ta
 
+
 @command_router.message(Command(commands='help'), StateFilter(None))
 async def help_command_handler(message: Message) -> None:
     await message.answer(F'''Buyruqlar:
@@ -70,11 +70,3 @@ Tugmalar:
 <i>{DriverButtons.FINISH_WORK}</i> - Taksist sifatida ishni tugatish\n
 <i>Agar sizda qandaydir muammo bulsa yoki savollaringiz bulsa <a href='https://t.me/Bewrlius_py'>Admin</a> ga murojat qiling</i>
 ''')
-
-"""
-     = State()
-    car_brand = State()
-    car_number = State()
-    license_term = State()
-
-"""

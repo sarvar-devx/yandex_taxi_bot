@@ -19,9 +19,8 @@ class DriverButtons:
 
 
 class AdminButtons:
-    GET_CHAT_ID = "🆔 Chat ID ni ko‘rish"
-    MANAGE_DRIVERS = "🚖 Haydovchilarni boshqarish"
     STATISTICS = "📊 Statistika"
+    DRIVER_INQUIRIES = "Taxist so'rovlari"
 
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
