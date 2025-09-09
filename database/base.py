@@ -76,13 +76,15 @@ class AbstractClass:
         await cls.commit()
 
     @classmethod
-    async def get(cls, id_=None, user_id=None):
+    async def get(cls, id_=None, *, user_id=None, relationship=None):
         if id_:
             query = select(cls).where(cls.id == id_)
-            return (await db.execute(query)).scalars().first()
         else:
             query = select(cls).where(cls.user_id == user_id)
-            return (await db.execute(query)).scalars().first()
+        if relationship:
+            query = query.options(selectinload(relationship))
+
+        return (await db.execute(query)).scalars().first()
 
     @classmethod
     async def delete(cls, id_):
