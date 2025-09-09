@@ -63,6 +63,10 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
         await message.answer_photo(driver.image, caption=msg, reply_markup=RequestDrivingButtons.get_markup())
         return
 
+    if await User.filter((User.id == message.from_user.id) & (User.is_admin)):
+        await message.answer("Uzur siz adminsiz sizga driver bolish mumikin emas")
+        return
+
     await state.update_data(user_id=message.from_user.id)
     await message.answer("Rasmingizni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverStates.image)

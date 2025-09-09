@@ -20,7 +20,7 @@ class DriverButtons:
 
 class AdminButtons:
     STATISTICS = "📊 Statistika"
-    DRIVER_CANDIDATES = "Taxistlikga nomzodlar"
+    DRIVER_CANDIDATES = "🚖Taxistlikga nomzodlar 👥"
 
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
@@ -35,6 +35,13 @@ def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
     main_keyboard.row(KeyboardButton(text=UserButtons.ORDER_HISTORY))
     main_keyboard.adjust(2, repeat=True)
     return main_keyboard
+
+
+def admin_keyboard_btn() -> ReplyKeyboardBuilder:
+    admin_keyboard = main_keyboard_btn()
+    admin_keyboard.row(KeyboardButton(text=AdminButtons.STATISTICS))
+    admin_keyboard.row(KeyboardButton(text=AdminButtons.DRIVER_CANDIDATES))
+    return admin_keyboard
 
 
 def driver_keyboard_btn() -> ReplyKeyboardBuilder:

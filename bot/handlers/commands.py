@@ -1,12 +1,12 @@
 from aiogram import Router
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, KeyboardButton
+from aiogram.types import Message, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.filters.checker import DriverHasPermission, IsDriver
+from bot.filters.checker import DriverHasPermission, IsDriver, IsAdmin
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
-from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons
+from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons, admin_keyboard_btn
 from database import User, Driver
 from utils.services import greeting_user, driver_info_msg
 
@@ -21,15 +21,14 @@ async def d_command_start_handler(message: Message, state: FSMContext) -> None:
 
 @command_router.message(IsDriver(), Command(commands='delete_driver_profile'), StateFilter(None))
 async def delete_driver_command_handler(message: Message) -> None:
-    driver = await Driver.get(user_id=message.from_user.id)
-    if driver:
-        if driver.has_client:
-            await message.answer("Bu driverni o'chirib bolmadi")
-            await message.delete()
-            return
-        await Driver.delete(driver.id)
+    await message.answer("Haqiqatdan ham taxist bolib ishlashdan bosh tortasizmi", reply_markup=InlineKeyboardMarkup(
+        inline_keyboard=[[InlineKeyboardButton(text="❌ Ha men haqiqatdan roziman", callback_data=f"reject_driving"),
+                          InlineKeyboardButton(text="Yoq men adashdim", callback_data="cancel")]]))
 
-    await message.answer("Taxi malumotlar o'chirildi")
+
+@command_router.message(IsAdmin(), CommandStart(), StateFilter(None))
+async def admin_command_start_handler(message: Message) -> None:
+    await message.answer('Salom', reply_markup=admin_keyboard_btn().as_markup(resize_keyboard=True))
 
 
 @command_router.message(CommandStart(), StateFilter(None))

@@ -20,8 +20,14 @@ driver_info_router.message.filter(IsDriver())
 driver_info_router.callback_query.filter(IsDriver())
 
 
+@driver_info_router.callback_query(F.data.startswith("cancel"))
+async def cancel_callback_query(callback: CallbackQuery) -> None:
+    await callback.answer("Hazillashdingizmi 😄 kulgula, <b>Bekor qilindi</b>")
+    await callback.message.delete()
+
+
 @driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.CONFIRM.callback_data))
-async def confirm_driving(callback: CallbackQuery, bot: Bot):
+async def confirm_driving(callback: CallbackQuery, bot: Bot) -> None:
     await callback.message.edit_reply_markup()
     admins = await User.filter(User.is_admin)
 
