@@ -65,10 +65,11 @@ class AbstractClass:
         return object_
 
     @classmethod
-    async def update(cls, id_, **kwargs):
+    async def update(cls, id_=None, *, user_id=None, **kwargs):
+        condition = cls.id == id_ if id_ is not None else cls.user_id == user_id
         query = (
             sqlalchemy_update(cls)
-            .where(cls.id == id_)
+            .where(condition)
             .values(**kwargs)
             .execution_options(synchronize_session="fetch")
         )
