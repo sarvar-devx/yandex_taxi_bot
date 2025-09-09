@@ -33,12 +33,22 @@ class DriverInfoInlineKeyboardButtons:
         ])
 
 
-def drivers_list(drivers) -> InlineKeyboardMarkup:
+def drivers_list(drivers: list[Driver]) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardBuilder()
 
     for driver in drivers:
         ikb.row(InlineKeyboardButton(text=driver.user.first_name, callback_data=F"driver_id: {driver.user_id}"))
     ikb.adjust(2)
+    return ikb.as_markup()
+
+
+def inline_car_types_buttons(driver_id) -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardBuilder()
+    car_types = Driver.CarType
+    for car_type in car_types:
+        ikb.row(InlineKeyboardButton(text=car_type.name.title(),
+                                     callback_data=f"driver_car_type {car_type.name} {driver_id}"))
+    ikb.adjust(4)
     return ikb.as_markup()
 
 

@@ -8,7 +8,7 @@ from bot.filters.checker import DriverHasPermission
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
 from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons
 from database import User, Driver
-from utils.services import greeting_user
+from utils.services import greeting_user, driver_info_msg
 
 command_router = Router()
 
@@ -35,13 +35,9 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}'''
 
-    if driver := await Driver.filter(Driver.user_id == message.from_user.id):
+    if driver := await Driver.get(user_id=message.from_user.id):
         ikb = DriverInfoInlineKeyboardButtons.get_markup()
-        driver = driver[0]
-        msg += F"""\n🏎 Mashina rusumi: {driver.car_brand}
-🔢 Mashina raqami: <b><tg-spoiler>{driver.car_number}</tg-spoiler></b>"""
-        if driver.has_permission:
-            msg += f"\nMashina toifasi: <b><i><u> {driver.car_type.value.title()} </u></i></b>"
+        msg = driver_info_msg(driver)
         await message.answer_photo(driver.image, caption=msg + "\nTanlang: 👇", reply_markup=ikb)
         await message.answer("Tanlang", reply_markup=rkb.as_markup(resize_keyboard=True))
         return

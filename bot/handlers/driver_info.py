@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.checker import IsDriver
+from bot.handlers.admin import driver_candidates
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import back_button_markup
 from bot.states.user import DriverUpdateStates
@@ -25,7 +26,8 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot):
 
     for admin in admins:
         await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
-        await bot.send_message(admin.id, "Driver malumotlarini teskshirib driver lik huquqini bering")
+        await bot.send_message(admin.id, "Taxistlikga nomzodlar bor")
+        await driver_candidates(callback.message)
 
     await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
 
@@ -33,11 +35,22 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot):
 # Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
 @driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.REJECTION.callback_data))
 async def handle_reject_driving_input(callback: CallbackQuery) -> None:
-    driver = (await Driver.filter(Driver.user_id == callback.from_user.id))
+    callback_data = callback.data.split()
+    driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
+    driver = (await Driver.filter(Driver.user_id == driver_id))
     if driver:
         await Driver.delete(driver[0].id)
+    elif driver.has_client:
+        await callback.message.answer("Bu driverni o'chirib bolmadi")
+        await callback.message.delete()
+        return
+
+    await callback.message.edit_reply_markup()
+    if len(callback_data) < 1:
+        await callback.message.delete()
+    else:
+        await driver_candidates(callback.message)
     await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
-    await callback.message.delete()
 
 
 @driver_info_router.callback_query(F.data.startswith('change_car_brand'), StateFilter(None))

@@ -36,3 +36,15 @@ async def validate_name_input(message: Message, retry_function: Callable, state:
         await retry_function(message, state)
         return False
     return True
+
+
+def driver_info_msg(driver: Driver) -> str:
+    msg = f'''🙎🏻‍♂️ Ism: {driver.user.first_name}
+🙎🏻‍♂️ Familiya: {driver.user.last_name}
+📞 Telefon raqam: +998{driver.user.phone_number}
+🏎 Mashina rusumi: {driver.car_brand}
+🔢 Mashina raqami: <b><tg-spoiler>{driver.car_number}</tg-spoiler></b>
+Mashina toifasi: <b><i><u> {driver.car_type.name} </u></i></b>'''
+    if driver.has_permission:
+        msg += f"\n<b>Hurmatli user sizda taxistlik huquqi bor</b>"
+    return msg

@@ -20,7 +20,7 @@ class DriverButtons:
 
 class AdminButtons:
     STATISTICS = "📊 Statistika"
-    DRIVER_INQUIRIES = "Taxist so'rovlari"
+    DRIVER_CANDIDATES = "Taxistlikga nomzodlar"
 
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:

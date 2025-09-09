@@ -10,7 +10,7 @@ from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
 from bot.states.user import UserStates, DriverStates
 from database import User, Driver
 from utils.face_detect import has_face
-from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user
+from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user, driver_info_msg
 
 register_router = Router()
 
@@ -55,12 +55,12 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 # Oddi user driver bolmoqchi bolsa javob beruvchi buttonlar
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
-    if driver := await Driver.filter(Driver.user_id == message.from_user.id):
-        driver = driver[0]
-        msg = f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\nIsm: {driver.user.first_name} \nFamiliya: {driver.user.last_name} \nTel: <a href="tel:+998{driver.user.phone_number}">+998{driver.user.phone_number}</a> \nMashina rusumi: {driver.car_brand} \nMashina raqami: {driver.car_number}'
-        await message.answer_photo(driver.image,
-                                   caption=msg + f'\nHurmatli <a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> taxi bo\'lib ishlashni xoxlaysizmi',
-                                   reply_markup=RequestDrivingButtons.get_markup())
+    if driver := await Driver.get(user_id=message.from_user.id):
+        msg = (f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\n' +
+               driver_info_msg(driver))
+        await message.answer(
+            f'\nHurmatli <a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> taxi bo\'lib ishlashni xoxlaysizmi')
+        await message.answer_photo(driver.image, caption=msg, reply_markup=RequestDrivingButtons.get_markup())
         return
 
     await state.update_data(user_id=message.from_user.id)
