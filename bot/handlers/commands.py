@@ -63,6 +63,7 @@ async def myinfo_command_handler(message: Message) -> None:
 @command_router.message(Command(commands='help'), StateFilter(None))
 async def help_command_handler(message: Message) -> None:
     await message.answer(F'''Buyruqlar:
+/delete_driver_profile - Botdan o'z ma'lumotlaringgizi toliq yo'q qilish \n
 /start - Siz bu buyruq bilan botni ishga tushirasiz \n
 /myinfo - Uzingizning malumotlaringizni yangilaysiz \n
 /help - Botning vazifalarini tushinish\n
@@ -76,5 +77,5 @@ Tugmalar:
 <i>{DriverButtons.GO}</i> - Botdan foyalanishni boshlash\n
 <i>{DriverButtons.START_WORK}</i> - Taksist sifatida ishni boshlash\n
 <i>{DriverButtons.FINISH_WORK}</i> - Taksist sifatida ishni tugatish\n
-<i>Agar sizda qandaydir muammo bulsa yoki savollaringiz bulsa <a href='https://t.me/Bewrlius_py'>Admin</a> ga murojat qiling</i>
+<i>Agar sizda qandaydir muammo bulsa yoki savollaringiz bulsa <a href='https://t.me/Bewrlius_py'>Operatorga</a> ga murojat qiling</i>
 ''')

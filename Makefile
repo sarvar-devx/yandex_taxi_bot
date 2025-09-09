@@ -9,6 +9,6 @@ current-mig:
 	alembic revision --autogenerate -m "add Star model"
 	alembic upgrade head
 
-
 celery:
 	celery -A core.celery worker --loglevel=info
+
