@@ -47,4 +47,6 @@ def driver_info_msg(driver: Driver) -> str:
 Mashina toifasi: <b><i><u> {driver.car_type.name} </u></i></b>'''
     if driver.has_permission:
         msg += f"\n<b>Hurmatli user sizda taxistlik huquqi bor</b>"
+    else:
+        msg += f"\n<b><strike>Sizda hozircha taxistlik huquqi yoq</strike></b>"
     return msg
