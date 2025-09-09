@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.filters.checker import DriverHasPermission
+from bot.filters.checker import DriverHasPermission, IsDriver
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
 from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons
 from database import User, Driver
@@ -17,6 +17,19 @@ command_router = Router()
 async def d_command_start_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
     await state.clear()
+
+
+@command_router.message(IsDriver(), Command(commands='delete_driver_profile'), StateFilter(None))
+async def delete_driver_command_handler(message: Message) -> None:
+    driver = await Driver.get(user_id=message.from_user.id)
+    if driver:
+        if driver.has_client:
+            await message.answer("Bu driverni o'chirib bolmadi")
+            await message.delete()
+            return
+        await Driver.delete(driver.id)
+
+    await message.answer("Taxi malumotlar o'chirildi")
 
 
 @command_router.message(CommandStart(), StateFilter(None))

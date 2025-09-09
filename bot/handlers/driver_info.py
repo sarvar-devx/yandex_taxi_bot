@@ -7,6 +7,7 @@ from aiogram.types import Message, CallbackQuery
 
 from bot.filters.checker import IsDriver
 from bot.handlers.admin import driver_candidates
+from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import back_button_markup
 from bot.states.user import DriverUpdateStates
@@ -34,16 +35,16 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot):
 
 # Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
 @driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.REJECTION.callback_data))
-async def handle_reject_driving_input(callback: CallbackQuery) -> None:
+async def delete_driver_profile_handler(callback: CallbackQuery) -> None:
     callback_data = callback.data.split()
     driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
     driver = (await Driver.filter(Driver.user_id == driver_id))
     if driver:
+        if driver.has_client:
+            await callback.message.answer("Bu driverni o'chirib bolmadi")
+            await callback.message.delete()
+            return
         await Driver.delete(driver[0].id)
-    elif driver.has_client:
-        await callback.message.answer("Bu driverni o'chirib bolmadi")
-        await callback.message.delete()
-        return
 
     await callback.message.edit_reply_markup()
     if len(callback_data) < 1:
@@ -69,6 +70,7 @@ async def change_car_brand_handler(message: Message, state: FSMContext):
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
     await Driver.update(driver.id, car_brand=message.text)
     await message.answer(f"✅ Mashina brandi {message.text.title()}ga ozgartirildi !")
+    await myinfo_command_handler(message)
     await state.clear()
 
 
@@ -93,6 +95,7 @@ async def change_car_number_handler(message: Message, state: FSMContext):
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
     await Driver.update(driver.id, car_number=message.text.upper())
     await message.answer(f"✅ Mashina raqami {message.text} ga ozgartirildi !")
+    await myinfo_command_handler(message)
     await state.clear()
 
 
@@ -113,6 +116,7 @@ async def change_taxi_license(message: Message, state: FSMContext):
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
     await Driver.update(driver.id, license_term=message.text)
     await message.answer(f"✅ Litsenziya yangilandi")
+    await myinfo_command_handler(message)
     await state.clear()
 
 
@@ -133,4 +137,5 @@ async def change_driver_image(message: Message, state: FSMContext, bot: Bot):
     driver = (await Driver.filter(Driver.user_id == message.from_user.id))[0]
     await Driver.update(driver.id, image=message.photo[-1].file_id)
     await message.answer("✅  Haydovchi rasmi yangilandi")
+    await myinfo_command_handler(message)
     await state.clear()

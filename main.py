@@ -5,7 +5,7 @@ import sys
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, BotCommandScopeChat
 
 from bot.handlers.admin import admin_router
 from bot.handlers.commands import command_router
@@ -16,6 +16,7 @@ from bot.handlers.register import register_router
 from bot.handlers.user import user_router
 from bot.middlewares import RegistrationMiddleware
 from config import conf
+from database import Driver
 
 
 async def on_start(bot: Bot):
@@ -25,6 +26,11 @@ async def on_start(bot: Bot):
         BotCommand(command='help', description="🆘 yordam"),
     ]
     await bot.set_my_commands(commands=user_commands)
+    driver_commands = user_commands + [BotCommand(command="delete_driver_profile",
+                                                  description="Taxist profilni o'chirib yuborish")]
+    drivers = await Driver.all()
+    for driver in drivers:
+        await bot.set_my_commands(driver_commands, BotCommandScopeChat(chat_id=driver.user_id))
 
 
 async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
