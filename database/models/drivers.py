@@ -1,8 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from aiogram.types import DateTime
 
-from sqlalchemy import Enum as SqlAlchemyEnum, Integer
+from sqlalchemy import Enum as SqlAlchemyEnum, Integer, func, DateTime
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

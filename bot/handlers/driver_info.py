@@ -45,7 +45,7 @@ async def delete_driver_profile_handler(callback: CallbackQuery) -> None:
     driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
     driver = (await Driver.filter(Driver.user_id == driver_id))
     if driver:
-        if driver.has_client:
+        if driver.has_client: # Xatolik
             await callback.message.answer("Bu driverni o'chirib bolmadi")
             await callback.message.delete()
             return

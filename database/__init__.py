@@ -1,2 +1,2 @@
-from database.models import User, Driver, DriverLocation, Order
+from database.models import User, Driver, DriverLocation, Order, Address
 from database.base import Base
