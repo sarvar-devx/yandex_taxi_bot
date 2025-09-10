@@ -1,6 +1,7 @@
-from sqlalchemy import String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
 
+from sqlalchemy import String, Boolean, ForeignKey, Float
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import TimeBaseModel
 
 
@@ -15,3 +16,13 @@ class User(TimeBaseModel):
     orders: Mapped[list["Order"]] = relationship("Order", back_populates="user")
     comments = relationship("Comment", back_populates="user")
 
+    addresses: Mapped[list["Address"]] = relationship("Address", back_populates="user")
+    # Kop manzillar bolishi mummkun
+
+# Manzil
+class Address(TimeBaseModel):
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship("User", back_populates="Addresses")
+
+    latitude: Mapped[float] = mapped_column(Float)
+    longitude: Mapped[float] = mapped_column(Float)

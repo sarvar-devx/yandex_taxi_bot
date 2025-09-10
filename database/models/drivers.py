@@ -1,4 +1,6 @@
+from datetime import datetime
 from enum import Enum
+from aiogram.types import DateTime
 
 from sqlalchemy import Enum as SqlAlchemyEnum, Integer
 from sqlalchemy import String, ForeignKey, Boolean, Float
@@ -37,6 +39,13 @@ class DriverLocation(TimeBaseModel):
 
     latitude: Mapped[float] = mapped_column(Float)
     longitude: Mapped[float] = mapped_column(Float)
+
+    toll: Mapped[float] = mapped_column(Float)
+    # Yo'l haqqini xisoblash Start Komfort Biznes Primer narxi aloxida hisob kitob
+
+    start_time: Mapped[datetime] = mapped_column(DateTime)
+    end_time: Mapped[datetime] = mapped_column(DateTime)
+    # Yetib kelelib 5 daqiqa dan keyin kechikgan vaht uchun daqiqasiga 2 ming dan hisoblash
 
 
 class Comment(TimeBaseModel):

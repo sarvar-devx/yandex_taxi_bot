@@ -15,14 +15,13 @@ from database import Driver, User
 from utils.face_detect import has_face
 
 driver_info_router = Router()
-
 driver_info_router.message.filter(IsDriver())
 driver_info_router.callback_query.filter(IsDriver())
 
 
 @driver_info_router.callback_query(F.data.startswith("cancel"))
 async def cancel_callback_query(callback: CallbackQuery) -> None:
-    await callback.answer("Hazillashdingizmi 😄 kulgula, <b>Bekor qilindi</b>")
+    await callback.answer("Hazillashdingizmi 😄 kulguli, <b>Bekor qilindi</b>")
     await callback.message.delete()
 
 
