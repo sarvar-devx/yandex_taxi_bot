@@ -19,6 +19,7 @@ async def driver_candidates(message: Message):
     drivers = await Driver.filter(Driver.has_permission == False, relationship=Driver.user)
     if len(drivers) == 0:
         await message.answer("Hozircha nomzodlar yoq")
+        return
     await message.answer("Bu yerda taxistlikka nomzodlar: ", reply_markup=drivers_list(drivers))
 
 
