@@ -9,17 +9,10 @@ from database.base import TimeBaseModel
 
 
 class Driver(TimeBaseModel):
-    class CarType(Enum):
-        START = "start"
-        COMFORT = "comfort"
-        BUSINESS = "business"
-        PREMIER = "premier"
-
     image: Mapped[str] = mapped_column(String(255))
     car_brand: Mapped[str] = mapped_column(String(255))
     car_number: Mapped[str] = mapped_column(String(15))
     license_term: Mapped[str] = mapped_column(String(255))
-    car_type: Mapped[SqlAlchemyEnum] = mapped_column(SqlAlchemyEnum(CarType), default=CarType.START)
     has_permission: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     has_client: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -30,6 +23,9 @@ class Driver(TimeBaseModel):
     orders: Mapped[list["Order"]] = relationship("Order", back_populates="driver")
     comments = relationship("Comment", back_populates="driver")
     stars = relationship("Star", secondary="comments", viewonly=True, back_populates=None)
+
+    car_type_id: Mapped[int] = mapped_column(ForeignKey("car_types.id"))
+    car_type: Mapped["CarType"] = relationship("CarType", back_populates="drivers")
 
 
 class DriverLocation(TimeBaseModel):

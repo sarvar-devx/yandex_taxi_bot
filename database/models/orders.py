@@ -10,12 +10,6 @@ from database.base import TimeBaseModel
 class Order(TimeBaseModel):
     __tablename__ = "orders"
 
-    class OrderType(Enum):
-        START = "start"
-        COMFORT = "comfort"
-        BUSINESS = "business"
-        PREMIER = "premier"
-
     class OrderStatus(Enum):
         PENDING = "pending"
         ACCEPTED = "accepted"
@@ -30,15 +24,15 @@ class Order(TimeBaseModel):
     drop_latitude: Mapped[float] = mapped_column(Float, nullable=True)
     drop_longitude: Mapped[float] = mapped_column(Float, nullable=True)
     status: Mapped[SqlAlchemyEnum] = mapped_column(SqlAlchemyEnum(OrderStatus), default=OrderStatus.PENDING)
-    type: Mapped[SqlAlchemyEnum] = mapped_column(SqlAlchemyEnum(OrderType), default=OrderType.START)
-
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), nullable=True)
+
+    car_type_id: Mapped[int] = mapped_column(ForeignKey("car_types.id"))
+    car_type: Mapped["CarType"] = relationship("CarType", back_populates="orders")
 
     user: Mapped["User"] = relationship("User", back_populates="orders")
     driver: Mapped["Driver"] = relationship("Driver", back_populates="orders")
 
-    # Address relationships - to'g'ri sintaks
     pickup_address: Mapped["Address"] = relationship(
         "Address",
         foreign_keys="Order.pickup_address_id",
