@@ -6,6 +6,7 @@ from bot.filters.checker import IsAdmin
 from bot.keyboard.inline import drivers_list, inline_car_types_buttons
 from bot.keyboard.reply import AdminButtons
 from database import Driver
+from database.models import CarType
 from utils.services import driver_info_msg
 
 admin_router = Router()
@@ -33,11 +34,11 @@ async def driver_request(callback: CallbackQuery):
     driver_id = int(callback.data.split()[-1])
     driver = await Driver.get(user_id=driver_id, relationship=Driver.user)
     msg = driver_info_msg(driver)
-
+    car_types = await CarType.all()
     await callback.message.edit_media(
         media=InputMediaPhoto(media=driver.image,
                               caption=msg + "\n\n------------<b> avtomobil turini tanlang </b>------------"),
-        reply_markup=inline_car_types_buttons(driver_id))
+        reply_markup=inline_car_types_buttons(driver_id, car_types))
     await callback.message.answer("Tasdiqlamasingiz: ", reply_markup=InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text="❌ Bu driver malumotlarini tasiqlamayman",
                                                callback_data=f"reject_driving: {driver_id}")]]))

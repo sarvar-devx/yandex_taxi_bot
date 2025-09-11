@@ -42,9 +42,8 @@ def drivers_list(drivers: list[Driver]) -> InlineKeyboardMarkup:
     return ikb.as_markup()
 
 
-def inline_car_types_buttons(driver_id) -> InlineKeyboardMarkup:
+def inline_car_types_buttons(driver_id, car_types) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardBuilder()
-    car_types = Driver.CarType
     for car_type in car_types:
         ikb.row(InlineKeyboardButton(text=car_type.name.title(),
                                      callback_data=f"driver_car_type {car_type.name} {driver_id}"))
