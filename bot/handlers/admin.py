@@ -53,15 +53,7 @@ async def give_car_type(callback: CallbackQuery):
         await callback.answer("Bu driverda permission bor yoki driver aniqlanmadi", show_alert=True)
         return
 
-    car_type = callback_data[1]
-    if car_type == Driver.CarType.START.name:
-        car_type = Driver.CarType.START
-    elif car_type == Driver.CarType.COMFORT.name:
-        car_type = Driver.CarType.COMFORT
-    elif car_type == Driver.CarType.PREMIER.name:
-        car_type = Driver.CarType.PREMIER
-    elif car_type == Driver.CarType.BUSINESS.name:
-        car_type = Driver.CarType.BUSINESS
+    car_type = getattr(Driver.CarType, callback_data[1], Driver.CarType.START)
 
     await Driver.update(user_id=driver_id, car_type=car_type)
     msg = driver_info_msg(driver)

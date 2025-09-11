@@ -39,12 +39,15 @@ class DriverLocation(TimeBaseModel):
     latitude: Mapped[float] = mapped_column(Float)
     longitude: Mapped[float] = mapped_column(Float)
 
-    toll: Mapped[float] = mapped_column(Float)
-    # Yo'l haqqini xisoblash Start Komfort Biznes Primer narxi aloxida hisob kitob
+    # MUHIM: start_time faqat mijoz oldiga yetganda boshlanadi
+    arrival_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Mijoz oldiga yetgan vaqt
+    start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)    # Kutish boshlanish vaqti
+    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)      # Safar tugash vaqti
 
-    start_time: Mapped[datetime] = mapped_column(DateTime)
-    end_time: Mapped[datetime] = mapped_column(DateTime)
-    # Yetib kelelib 5 daqiqa dan keyin kechikgan vaht uchun daqiqasiga 2 ming dan hisoblash
+    toll: Mapped[float] = mapped_column(Float, default=0.0)
+    distance_km: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
+    waiting_fee: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
+    total_amount: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
 
 
 class Comment(TimeBaseModel):
