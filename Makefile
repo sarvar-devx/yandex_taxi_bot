@@ -6,7 +6,7 @@ down-migrate:
 	alembic downgrade
 
 current-mig:
-	alembic revision --autogenerate -m "add Star model"
+	alembic revision --autogenerate -m "add CarType"
 	alembic upgrade head
 
 celery:

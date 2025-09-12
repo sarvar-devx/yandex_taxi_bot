@@ -3,6 +3,7 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from database import Driver
+from database.models import CarType
 
 
 class RequestDrivingButtons:
@@ -53,7 +54,7 @@ def inline_car_types_buttons(driver_id, car_types) -> InlineKeyboardMarkup:
 
 def user_order_type():
     ikb = InlineKeyboardBuilder()
-    for car in Driver.CarType:
+    for car in CarType.Type:
         ikb.add(
             InlineKeyboardButton(
                 text=car.value.capitalize(),

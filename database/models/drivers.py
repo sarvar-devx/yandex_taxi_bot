@@ -1,7 +1,6 @@
 from datetime import datetime
-from enum import Enum
 
-from sqlalchemy import Enum as SqlAlchemyEnum, Integer, func, DateTime
+from sqlalchemy import Integer, DateTime
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -37,13 +36,14 @@ class DriverLocation(TimeBaseModel):
 
     # MUHIM: start_time faqat mijoz oldiga yetganda boshlanadi
     arrival_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Mijoz oldiga yetgan vaqt
-    start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)    # Kutish boshlanish vaqti
-    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)      # Safar tugash vaqti
+    start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Kutish boshlanish vaqti
+    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Safar tugash vaqti
 
-    toll: Mapped[float] = mapped_column(Float, default=0.0)
-    distance_km: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
-    waiting_fee: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
-    total_amount: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
+    toll: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+
+    distance_km: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+    waiting_fee: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+    total_amount: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
 
 
 class Comment(TimeBaseModel):

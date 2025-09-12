@@ -32,4 +32,3 @@ async def driver_send_location(message: Message, state: FSMContext):
     )
     await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖", reply_markup=ReplyKeyboardRemove())
     await state.clear()
-

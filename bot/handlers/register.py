@@ -3,12 +3,13 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
-from bot.keyboard.inline import RequestDrivingButtons
+from bot.keyboard.inline import RequestDrivingButtons, user_order_type
 from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
 from bot.states.user import UserStates, DriverStates
 from database import User, Driver
+from database.models import CarType
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user, driver_info_msg
 
@@ -111,7 +112,16 @@ async def handle_car_number_input(message: Message, state: FSMContext) -> None:
         return
 
     await state.update_data(car_number=message.text.upper())
-    await message.answer("Yandex litsenziya id raqamini kiriting:")
+    await message.answer("Automobilingiz qaysi turga kiradi 👇🏻", reply_markup=user_order_type())
+    await state.set_state(DriverStates.car_type)
+
+
+@register_router.callback_query(DriverStates.car_type, F.data.in_([c.value for c in CarType.Type]))
+async def handle_car_number_input(callback: CallbackQuery, bot: Bot, state: FSMContext) -> None:
+    print(callback.data)
+    await state.update_data(car_type=callback.data)
+    await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+    await callback.message.answer("Yandex litsenziya id raqamini kiriting:")
     await state.set_state(DriverStates.license_term)
 
 

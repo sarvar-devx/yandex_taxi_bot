@@ -8,6 +8,7 @@ from bot.keyboard.reply import UserButtons, get_location
 from bot.states.user import OrderStates
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from database import Order, User, Driver
+from database.models import CarType
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
@@ -41,7 +42,7 @@ async def order_location(message: Message, state: FSMContext) -> None:
     # await message.answer(text="🔙 Orqaga", reply_markup=back_button_markup)
 
 
-@user_router.callback_query(OrderStates.order_type, F.data.in_([c.value for c in Driver.CarType]))
+@user_router.callback_query(OrderStates.order_type, F.data.in_([c.value for c in CarType.Type]))
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Handle car type selection:
