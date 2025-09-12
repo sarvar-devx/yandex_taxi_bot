@@ -77,13 +77,14 @@ class AbstractClass:
         await cls.commit()
 
     @classmethod
-    async def get(cls, id_=None, *, user_id=None, relationship=None):
+    async def get(cls, id_=None, *, user_id=None, relationships: list | None = None):
         if id_:
             query = select(cls).where(cls.id == id_)
         else:
             query = select(cls).where(cls.user_id == user_id)
-        if relationship:
-            query = query.options(selectinload(relationship))
+        if relationships:
+            for relationship in relationships:
+                query = query.options(selectinload(relationship))
 
         return (await db.execute(query)).scalars().first()
 

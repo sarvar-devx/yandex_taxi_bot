@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.filters.checker import DriverHasPermission
-from bot.keyboard.reply import get_location
+from bot.keyboard import get_location
 from database import Driver, DriverLocation
 
 driver_router = Router()

@@ -30,8 +30,7 @@ async def on_start(bot: Bot):
 
 
 async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
-    pass
-    # await bot.delete_my_commands()
+    await bot.delete_my_commands()
 
 
 

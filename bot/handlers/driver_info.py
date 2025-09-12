@@ -6,10 +6,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.checker import IsDriver
-from bot.handlers.admin import driver_candidates
 from bot.handlers.commands import myinfo_command_handler
-from bot.keyboard.inline import RequestDrivingButtons
-from bot.keyboard.reply import back_button_markup
+from bot.keyboard import RequestDrivingButtons, back_button_markup, admin_keyboard_btn
 from bot.states.user import DriverUpdateStates
 from database import Driver, User
 from utils.face_detect import has_face
@@ -32,31 +30,10 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot) -> None:
 
     for admin in admins:
         await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
-        await bot.send_message(admin.id, "Taxistlikga nomzodlar bor")
-        await driver_candidates(callback.message)
+        await bot.send_message(admin.id, "Taxistlikga nomzodlar bor",
+                               reply_markup=admin_keyboard_btn().as_markup(resize_keyboard=True))
 
     await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
-
-
-# Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
-@driver_info_router.callback_query(F.data.startswith(RequestDrivingButtons.REJECTION.callback_data))
-async def delete_driver_profile_handler(callback: CallbackQuery) -> None:
-    callback_data = callback.data.split()
-    driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
-    driver = await Driver.get(user_id=driver_id)
-    if driver:
-        if driver.has_client:  # Xatolik
-            await callback.message.answer("Bu driverni o'chirib bolmadi")
-            await callback.message.delete()
-            return
-        await Driver.delete(driver.id)
-
-    await callback.message.edit_reply_markup()
-    if len(callback_data) < 2:
-        await callback.message.delete()
-    else:
-        await driver_candidates(callback.message)
-    await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
 
 
 @driver_info_router.callback_query(F.data.startswith('change_car_brand'), StateFilter(None))

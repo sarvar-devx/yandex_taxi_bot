@@ -19,8 +19,8 @@ class DriverButtons:
 
 
 class AdminButtons:
-    STATISTICS = "📊 Statistika"
     DRIVER_CANDIDATES = "🚖Taxistlikga nomzodlar 👥"
+    NEW_CAR_TYPE = "Yangi mashina toifasini qo'shish"
 
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
@@ -39,8 +39,8 @@ def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
 
 def admin_keyboard_btn() -> ReplyKeyboardBuilder:
     admin_keyboard = main_keyboard_btn()
-    admin_keyboard.row(KeyboardButton(text=AdminButtons.STATISTICS))
     admin_keyboard.row(KeyboardButton(text=AdminButtons.DRIVER_CANDIDATES))
+    admin_keyboard.row(KeyboardButton(text=AdminButtons.NEW_CAR_TYPE))
     return admin_keyboard
 
 

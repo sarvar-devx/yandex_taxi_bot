@@ -37,3 +37,8 @@ class OrderStates(StatesGroup):
     order_type = State()
     driver_id = State()
     user_id = State()
+
+
+class CarTypeStates(StatesGroup):
+    name = State()
+    price = State()

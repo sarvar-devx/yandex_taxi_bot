@@ -3,16 +3,37 @@ import re
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
-from bot.keyboard.inline import RequestDrivingButtons
-from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
+from bot.handlers.admin import driver_candidates
+from bot.keyboard import RequestDrivingButtons, phone_number_rkb, UserButtons, back_button_markup
 from bot.states.user import UserStates, DriverStates
 from database import User, Driver, CarType
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user, driver_info_msg
 
 register_router = Router()
+
+
+# Bekor qilingan haydovchi bolish buttonni driver anketasini o'chirib yuboradi
+@register_router.callback_query(F.data.startswith(RequestDrivingButtons.REJECTION.callback_data))
+async def delete_driver_profile_handler(callback: CallbackQuery) -> None:
+    callback_data = callback.data.split()
+    driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
+    driver = await Driver.get(user_id=driver_id)
+    if driver:
+        if driver.has_client:  # Xatolik
+            await callback.message.answer("Bu driverni o'chirib bolmadi")
+            await callback.message.delete()
+            return
+        await Driver.delete(driver.id)
+
+    await callback.message.edit_reply_markup()
+    if len(callback_data) < 2:
+        await callback.message.delete()
+    else:
+        await driver_candidates(callback.message)
+    await callback.answer("Taxi malumotlar o'chirildi", show_alert=True)
 
 
 # first_name qabul qiladi va tekshiradi kegin last_name ga yonaltrish
@@ -55,7 +76,7 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 # Oddi user driver bolmoqchi bolsa javob beruvchi buttonlar
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
-    if driver := await Driver.get(user_id=message.from_user.id, relationship=Driver.car_type):
+    if driver := await Driver.get(user_id=message.from_user.id, relationships=[Driver.car_type]):
         msg = (f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\n' +
                driver_info_msg(driver))
         await message.answer(

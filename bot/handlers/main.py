@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.handlers.commands import command_start_handler, myinfo_command_handler
-from bot.keyboard.reply import UserButtons
+from bot.keyboard import UserButtons
 from bot.states.user import ChangeNameStates
 from config import conf
 from database import User
