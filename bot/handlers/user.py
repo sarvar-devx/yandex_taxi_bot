@@ -41,7 +41,7 @@ async def order_location(message: Message, state: FSMContext) -> None:
     # await message.answer(text="🔙 Orqaga", reply_markup=back_button_markup)
 
 
-@user_router.callback_query(OrderStates.order_type, F.data.in_(CAR_TYPE_IDS))
+@user_router.callback_query(OrderStates.order_type, F.data.in_(CAR_TYPE_IDS ))
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Handle car type selection:
