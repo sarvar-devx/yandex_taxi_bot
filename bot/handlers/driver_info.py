@@ -43,16 +43,16 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot) -> None:
 async def delete_driver_profile_handler(callback: CallbackQuery) -> None:
     callback_data = callback.data.split()
     driver_id = int(callback_data[-1]) if len(callback_data) > 1 else callback.from_user.id
-    driver = (await Driver.filter(Driver.user_id == driver_id))
+    driver = await Driver.get(user_id=driver_id)
     if driver:
-        if driver.has_client: # Xatolik
+        if driver.has_client:  # Xatolik
             await callback.message.answer("Bu driverni o'chirib bolmadi")
             await callback.message.delete()
             return
-        await Driver.delete(driver[0].id)
+        await Driver.delete(driver.id)
 
     await callback.message.edit_reply_markup()
-    if len(callback_data) < 1:
+    if len(callback_data) < 2:
         await callback.message.delete()
     else:
         await driver_candidates(callback.message)

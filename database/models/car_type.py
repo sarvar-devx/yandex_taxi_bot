@@ -5,13 +5,8 @@ from database.base import TimeBaseModel
 
 
 class CarType(TimeBaseModel):
-    __tablename__ = "car_types"
-
-    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     price: Mapped[int] = mapped_column(Integer, default=5000, nullable=False)
 
     drivers: Mapped[list["Driver"]] = relationship("Driver", back_populates="car_type")
     orders: Mapped[list["Order"]] = relationship("Order", back_populates="car_type")
-
-
-

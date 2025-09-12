@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.checker import DriverHasPermission, IsDriver, IsAdmin
 from bot.keyboard.inline import DriverInfoInlineKeyboardButtons
 from bot.keyboard.reply import UserButtons, driver_keyboard_btn, DriverButtons, admin_keyboard_btn
-from database import User, Driver
+from database import User, Driver, CarType
 from utils.services import greeting_user, driver_info_msg
 
 command_router = Router()
@@ -47,7 +47,7 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}'''
 
-    if driver := await Driver.get(user_id=message.from_user.id):
+    if driver := await Driver.get(user_id=message.from_user.id, relationship=Driver.car_type):
         ikb = DriverInfoInlineKeyboardButtons.get_markup()
         msg = driver_info_msg(driver)
         await message.answer_photo(driver.image, caption=msg + "\nTanlang: 👇", reply_markup=ikb)

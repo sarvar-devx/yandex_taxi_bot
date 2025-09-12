@@ -15,11 +15,12 @@ class ChangeNameStates(StatesGroup):
 
 
 class DriverStates(StatesGroup):
-    id = State()
+    user_id = State()
     image = State()
     car_brand = State()
     car_number = State()
     license_term = State()
+    car_type_id = State()
 
 
 class DriverUpdateStates(StatesGroup):

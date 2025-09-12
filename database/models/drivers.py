@@ -1,7 +1,6 @@
 from datetime import datetime
-from enum import Enum
 
-from sqlalchemy import Enum as SqlAlchemyEnum, Integer, func, DateTime
+from sqlalchemy import Integer, DateTime
 from sqlalchemy import String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,8 +23,8 @@ class Driver(TimeBaseModel):
     comments = relationship("Comment", back_populates="driver")
     stars = relationship("Star", secondary="comments", viewonly=True, back_populates=None)
 
-    car_type_id: Mapped[int] = mapped_column(ForeignKey("car_types.id"))
-    car_type: Mapped["car_types"] = relationship("CarType", back_populates="drivers")
+    car_type_id: Mapped[int] = mapped_column(ForeignKey("car_types.id"), nullable=True)
+    car_type: Mapped["CarType"] = relationship("CarType", back_populates="drivers")
 
 
 class DriverLocation(TimeBaseModel):
@@ -37,8 +36,8 @@ class DriverLocation(TimeBaseModel):
 
     # MUHIM: start_time faqat mijoz oldiga yetganda boshlanadi
     arrival_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Mijoz oldiga yetgan vaqt
-    start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)    # Kutish boshlanish vaqti
-    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)      # Safar tugash vaqti
+    start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Kutish boshlanish vaqti
+    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Safar tugash vaqti
 
     toll: Mapped[float] = mapped_column(Float, default=0.0)
     distance_km: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)

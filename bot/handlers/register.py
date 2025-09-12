@@ -8,7 +8,7 @@ from aiogram.types import Message
 from bot.keyboard.inline import RequestDrivingButtons
 from bot.keyboard.reply import phone_number_rkb, UserButtons, back_button_markup
 from bot.states.user import UserStates, DriverStates
-from database import User, Driver
+from database import User, Driver, CarType
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user, driver_info_msg
 
@@ -55,7 +55,7 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
 # Oddi user driver bolmoqchi bolsa javob beruvchi buttonlar
 @register_router.message(F.text == UserButtons.BECOME_DRIVER, StateFilter(None))
 async def become_to_driver(message: Message, state: FSMContext) -> None:
-    if driver := await Driver.get(user_id=message.from_user.id):
+    if driver := await Driver.get(user_id=message.from_user.id, relationship=Driver.car_type):
         msg = (f'<a href="tg://user?id={driver.user_id}">{driver.user.first_name}</a> Sizning malumotlaringiz\n\n' +
                driver_info_msg(driver))
         await message.answer(
@@ -68,6 +68,9 @@ async def become_to_driver(message: Message, state: FSMContext) -> None:
         return
 
     await state.update_data(user_id=message.from_user.id)
+
+    car_type = (await CarType.filter(CarType.name == "START"))[0]
+    await state.update_data(car_type_id=car_type.id)
     await message.answer("Rasmingizni kiriting", reply_markup=back_button_markup)
     await state.set_state(DriverStates.image)
 
