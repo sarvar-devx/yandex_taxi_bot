@@ -39,10 +39,11 @@ class DriverLocation(TimeBaseModel):
     start_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Kutish boshlanish vaqti
     end_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)  # Safar tugash vaqti
 
-    toll: Mapped[float] = mapped_column(Float, default=0.0)
-    distance_km: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
-    waiting_fee: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
-    total_amount: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
+    toll: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+
+    distance_km: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+    waiting_fee: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
+    total_amount: Mapped[float] = mapped_column(Float, server_default="0.0", nullable=False)
 
 
 class Comment(TimeBaseModel):

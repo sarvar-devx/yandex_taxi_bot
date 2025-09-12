@@ -8,14 +8,12 @@ from database.base import TimeBaseModel
 
 
 class Order(TimeBaseModel):
-    __tablename__ = "orders"
-
     class OrderStatus(Enum):
         PENDING = "pending"
         ACCEPTED = "accepted"
-        DRIVER_GOING = "driver_going"      # Haydovchi kelmoqda
+        DRIVER_GOING = "driver_going"  # Haydovchi kelmoqda
         DRIVER_ARRIVED = "driver_arrived"  # Haydovchi yetib keldi
-        IN_PROGRESS = "in_progress"        # Safar boshlandi
+        IN_PROGRESS = "in_progress"  # Safar boshlandi
         COMPLETED = "completed"
         CANCELLED = "cancelled"
 

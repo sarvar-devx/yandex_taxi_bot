@@ -19,6 +19,7 @@ class DriverStates(StatesGroup):
     image = State()
     car_brand = State()
     car_number = State()
+    car_type = State()
     license_term = State()
     car_type_id = State()
 

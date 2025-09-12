@@ -7,13 +7,8 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
-from bot.handlers.admin import admin_router
-from bot.handlers.commands import command_router
-from bot.handlers.driver import driver_router
-from bot.handlers.driver_info import driver_info_router
-from bot.handlers.main import main_router
-from bot.handlers.register import register_router
-from bot.handlers.user import user_router
+from bot.handlers import command_router, main_router, register_router, user_router, driver_router, admin_router, \
+    driver_info_router
 from bot.middlewares import RegistrationMiddleware
 from config import conf
 from database import Driver
