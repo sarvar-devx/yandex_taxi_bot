@@ -17,6 +17,7 @@ from bot.handlers.user import user_router
 from bot.middlewares import RegistrationMiddleware
 from config import conf
 from database import Driver
+from utils.services import load_car_type_ids
 
 
 async def on_start(bot: Bot):
@@ -38,6 +39,7 @@ async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
     # await bot.delete_my_commands()
 
 
+
 async def main_polling():
     dp = Dispatcher()
     dp.startup.register(on_start)
@@ -52,6 +54,7 @@ async def main_polling():
         admin_router,
         driver_info_router
     )
+    await load_car_type_ids()
     bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     await dp.start_polling(bot)
 

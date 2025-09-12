@@ -6,7 +6,19 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from bot.keyboard.reply import main_keyboard_btn
 from bot.states.user import UserStates
 from database import Driver
+from database.models import CarType
 
+CAR_TYPE_IDS = []
+
+async def get_car_type_ids():
+    """Get all car type IDs from database"""
+    car_types = await CarType.all()
+    return [str(ct.id) for ct in car_types]
+
+async def load_car_type_ids():
+    """Load car type IDs into global variable"""
+    global CAR_TYPE_IDS
+    CAR_TYPE_IDS = await get_car_type_ids()
 
 async def greeting_user(message: Message):
     is_driver: bool = bool(await Driver.filter((Driver.user_id == message.from_user.id) & (Driver.has_permission)))

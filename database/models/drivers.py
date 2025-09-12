@@ -25,7 +25,7 @@ class Driver(TimeBaseModel):
     stars = relationship("Star", secondary="comments", viewonly=True, back_populates=None)
 
     car_type_id: Mapped[int] = mapped_column(ForeignKey("car_types.id"))
-    car_type: Mapped["CarType"] = relationship("CarType", back_populates="drivers")
+    car_type: Mapped["car_types"] = relationship("CarType", back_populates="drivers")
 
 
 class DriverLocation(TimeBaseModel):
