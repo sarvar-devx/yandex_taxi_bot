@@ -15,7 +15,8 @@ main_router = Router()
 
 @main_router.message(F.text == UserButtons.BACK)
 async def back_admin_menu_handler(message: Message, state: FSMContext):
-    await command_start_handler(message, state)
+    await state.clear()
+    await command_start_handler(message)
 
 
 @main_router.message(F.text == UserButtons.OPERATOR, StateFilter(None))
