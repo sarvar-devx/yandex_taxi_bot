@@ -5,7 +5,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from bot.filters.checker import IsDriver
+from bot.filters import IsDriver
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard import RequestDrivingButtons, back_button_markup, admin_keyboard_btn
 from bot.utils.face_detect import has_face

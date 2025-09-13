@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.keyboard.inline import driver_order_keyboard
-from bot.filters.checker import DriverHasPermission
+from bot.filters import DriverHasPermission
 from bot.keyboard import get_location
 from database import Driver, DriverLocation, Order, User
 
