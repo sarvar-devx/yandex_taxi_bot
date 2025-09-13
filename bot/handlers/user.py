@@ -5,7 +5,7 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 import utils.services as services
 from bot.filters.checker import IsCustomer
 from bot.keyboard import user_order_type, UserButtons, get_location
-from bot.states.user import OrderStates
+from bot.utils.states import OrderStates
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from database import Order, User, Driver, CarType
 

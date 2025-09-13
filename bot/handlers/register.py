@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 
 from bot.handlers.admin import driver_candidates
 from bot.keyboard import RequestDrivingButtons, phone_number_rkb, UserButtons, back_button_markup
-from bot.states.user import UserStates, DriverStates
+from bot.utils.states import UserStates, DriverStates
 from database import User, Driver, CarType
 from utils.face_detect import has_face
 from utils.services import validate_name_input, send_first_name, send_last_name, greeting_user, driver_info_msg

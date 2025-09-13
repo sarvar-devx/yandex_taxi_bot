@@ -8,7 +8,7 @@ from aiogram.types import Message, CallbackQuery
 from bot.filters.checker import IsDriver
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard import RequestDrivingButtons, back_button_markup, admin_keyboard_btn
-from bot.states.user import DriverUpdateStates
+from bot.utils.states import DriverUpdateStates
 from database import Driver, User
 from utils.face_detect import has_face
 

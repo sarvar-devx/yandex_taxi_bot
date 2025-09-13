@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 
 from bot.filters.checker import IsAdmin
 from bot.keyboard import drivers_list, inline_car_types_buttons, AdminButtons, back_button_markup
-from bot.states.user import CarTypeStates
+from bot.utils.states import CarTypeStates
 from database import Driver
 from database.models import CarType
 from utils.services import driver_info_msg

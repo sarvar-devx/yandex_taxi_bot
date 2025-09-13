@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.keyboard import main_keyboard_btn
-from bot.states.user import UserStates
+from bot.utils.states import UserStates
 from database import Driver
 from database.models import CarType
 
