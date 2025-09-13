@@ -2,12 +2,12 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
+import utils.services as services
 from bot.filters.checker import IsCustomer
 from bot.keyboard import user_order_type, UserButtons, get_location
 from bot.states.user import OrderStates
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
-from database import Order, User, Driver
-from utils.services import CAR_TYPE_IDS
+from database import Order, User, Driver, CarType
 
 user_router = Router()
 user_router.message.filter(IsCustomer())
@@ -34,14 +34,15 @@ async def order_location(message: Message, state: FSMContext) -> None:
     - Ask user to choose car type
     """
     lat, lon = message.location.latitude, message.location.longitude
+    car_types = await CarType.all()
     await state.update_data(latitude=lat, longitude=lon)
     await state.set_state(OrderStates.order_type)
     await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
-    await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type())
+    await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type(car_types))
     # await message.answer(text="🔙 Orqaga", reply_markup=back_button_markup)
 
 
-@user_router.callback_query(OrderStates.order_type, F.data.in_(CAR_TYPE_IDS))
+@user_router.callback_query(OrderStates.order_type, lambda c: c.data in services.CAR_TYPE_NAMES)
 async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Handle car type selection:

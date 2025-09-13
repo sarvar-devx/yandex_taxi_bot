@@ -3,7 +3,6 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from database import Driver
-from database.models import CarType
 
 
 class RequestDrivingButtons:
@@ -52,13 +51,13 @@ def inline_car_types_buttons(driver_id, car_types) -> InlineKeyboardMarkup:
     return ikb.as_markup()
 
 
-def user_order_type():
+def user_order_type(car_types):
     ikb = InlineKeyboardBuilder()
-    for car in CarType.Type:
+    for car_type in car_types:
         ikb.add(
             InlineKeyboardButton(
-                text=car.value.capitalize(),
-                callback_data=car.value
+                text=car_type.name.capitalize(),
+                callback_data=car_type.name
             )
         )
     return ikb.as_markup()

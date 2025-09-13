@@ -46,7 +46,7 @@ async def myinfo_command_handler(message: Message) -> None:
 🙎🏻‍♂️ Familiya: {user.last_name}
 📞 Telefon raqam: +998{user.phone_number}'''
 
-    if driver := await Driver.get(user_id=message.from_user.id, relationship=Driver.car_type):
+    if driver := await Driver.get(user_id=message.from_user.id, relationships=[Driver.car_type]):
         ikb = DriverInfoInlineKeyboardButtons.get_markup()
         msg = driver_info_msg(driver)
         await message.answer_photo(driver.image, caption=msg + "\nTanlang: 👇", reply_markup=ikb)

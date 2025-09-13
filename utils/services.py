@@ -8,19 +8,19 @@ from bot.states.user import UserStates
 from database import Driver
 from database.models import CarType
 
-CAR_TYPE_IDS = []
+CAR_TYPE_NAMES = []
 
 
-async def get_car_type_ids():
+async def get_car_type_names():
     """Get all car type IDs from database"""
     car_types = await CarType.all()
-    return [str(ct.id) for ct in car_types]
+    return [ct.name for ct in car_types]
 
 
-async def load_car_type_ids():
+async def load_car_type_names():
     """Load car type IDs into global variable"""
-    global CAR_TYPE_IDS
-    CAR_TYPE_IDS = await get_car_type_ids()
+    global CAR_TYPE_NAMES
+    CAR_TYPE_NAMES = await get_car_type_names()
 
 
 async def greeting_user(message: Message):

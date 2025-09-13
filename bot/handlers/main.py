@@ -3,7 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from bot.handlers.commands import command_start_handler, myinfo_command_handler
+from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard import UserButtons
 from bot.states.user import ChangeNameStates
 from config import conf
@@ -11,12 +11,6 @@ from database import User
 from utils.services import validate_name_input
 
 main_router = Router()
-
-
-@main_router.message(F.text == UserButtons.BACK)
-async def back_admin_menu_handler(message: Message, state: FSMContext):
-    await state.clear()
-    await command_start_handler(message)
 
 
 @main_router.message(F.text == UserButtons.OPERATOR, StateFilter(None))

@@ -2,17 +2,32 @@ import asyncio
 import logging
 import sys
 
-from aiogram import Dispatcher, Bot
+from aiogram import Dispatcher, Bot, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.types import BotCommand, BotCommandScopeChat
+from aiogram.fsm.context import FSMContext
+from aiogram.types import BotCommand, BotCommandScopeChat, Message, Update
 
 from bot.handlers import command_router, main_router, register_router, user_router, driver_router, admin_router, \
     driver_info_router
+from bot.keyboard import UserButtons
 from bot.middlewares import RegistrationMiddleware
 from config import conf
 from database import Driver
-from utils.services import load_car_type_ids
+from utils.services import load_car_type_names
+
+dp = Dispatcher()
+
+
+@main_router.message(F.text == UserButtons.BACK)
+async def back_admin_menu_handler(message: Message, state: FSMContext):
+    await state.clear()
+    # /start komandasi kabi yangi Update yasash
+    fake_message = message.model_copy(update={"text": "/start"})
+    fake_update = Update(update_id=0, message=fake_message)
+
+    # dispatcher orqali qayta ishlash
+    await dp.feed_update(bot=message.bot, update=fake_update)
 
 
 async def on_start(bot: Bot):
@@ -33,9 +48,7 @@ async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
     await bot.delete_my_commands()
 
 
-
 async def main_polling():
-    dp = Dispatcher()
     dp.startup.register(on_start)
     dp.update.middleware(RegistrationMiddleware())
     dp.shutdown.register(on_shutdown)
@@ -48,7 +61,7 @@ async def main_polling():
         admin_router,
         driver_info_router
     )
-    await load_car_type_ids()
+    await load_car_type_names()
     bot = Bot(conf.bot.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     await dp.start_polling(bot)
 
