@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, CopyTextButton, \
     InputMediaPhoto
 
-from bot.filters.checker import IsAdmin
+from bot.filters import IsAdmin
 from bot.keyboard import drivers_list, inline_car_types_buttons, AdminButtons, back_button_markup
 from bot.utils.services import driver_info_msg
 from bot.utils.states import CarTypeStates

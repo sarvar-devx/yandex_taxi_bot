@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.filters.checker import DriverHasPermission, IsDriver, IsAdmin
+from bot.filters import DriverHasPermission, IsDriver, IsAdmin
 from bot.keyboard import DriverInfoInlineKeyboardButtons, UserButtons, driver_keyboard_btn, DriverButtons, \
     admin_keyboard_btn
 from bot.utils.services import greeting_user, driver_info_msg
