@@ -32,9 +32,8 @@ async def admin_command_start_handler(message: Message) -> None:
 
 
 @command_router.message(CommandStart(), StateFilter(None))
-async def command_start_handler(message: Message, state: FSMContext) -> None:
+async def command_start_handler(message: Message) -> None:
     await greeting_user(message)
-    await state.clear()
 
 
 @command_router.message(Command(commands='myinfo'), StateFilter(None))
