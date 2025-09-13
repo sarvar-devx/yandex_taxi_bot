@@ -4,6 +4,16 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from database import Driver
 
+def driver_order_keyboard(order_id: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Qabul qilish", callback_data=f"accept_order:{order_id}"),
+                InlineKeyboardButton(text="❌ Rad etish", callback_data=f"reject_order:{order_id}")
+            ]
+        ]
+    )
+
 
 class RequestDrivingButtons:
     CONFIRM = InlineKeyboardButton(text="✅ Ha men taxi bo'lmoqchiman 🚖", callback_data="confirm_driving")

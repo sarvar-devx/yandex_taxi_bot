@@ -93,7 +93,6 @@ User avval ozini lokatsiyasini tashlaydi keyin MANZIL LAKATSIYASINI VA OLDINDAN 
     va user ga haydovchi 5 daqiqa tekin kutadi keyin daqiqasiga 1000 so'mdan yokira xaqqiga qoshilishidan ogoxlantradi
     taksi yetib keldi buttoni dirver yetib keldim button bosgandan keyin chiqadi va userdan boshqa xechnarsa qilmayd
 
-
 VAZIFA 1:
     USER AVVAL manzilga qancha yol xaqqi ketishini bilishi xaqida ogoxlantrilishi kerak
 
