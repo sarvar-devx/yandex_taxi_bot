@@ -7,8 +7,8 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.checker import DriverHasPermission, IsDriver, IsAdmin
 from bot.keyboard import DriverInfoInlineKeyboardButtons, UserButtons, driver_keyboard_btn, DriverButtons, \
     admin_keyboard_btn
+from bot.utils.services import greeting_user, driver_info_msg
 from database import User, Driver
-from utils.services import greeting_user, driver_info_msg
 
 command_router = Router()
 

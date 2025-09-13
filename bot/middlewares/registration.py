@@ -2,8 +2,8 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 from aiogram.types.update import Update
 
+from bot.utils.services import send_first_name
 from database import User
-from utils.services import send_first_name
 
 
 class RegistrationMiddleware(BaseMiddleware):
