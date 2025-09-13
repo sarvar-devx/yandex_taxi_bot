@@ -5,10 +5,10 @@ from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.handlers.commands import myinfo_command_handler
 from bot.keyboard import UserButtons
+from bot.utils.services import validate_name_input
 from bot.utils.states import ChangeNameStates
 from config import conf
 from database import User
-from utils.services import validate_name_input
 
 main_router = Router()
 

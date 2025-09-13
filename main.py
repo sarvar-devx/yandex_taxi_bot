@@ -12,9 +12,9 @@ from bot.handlers import command_router, main_router, register_router, user_rout
     driver_info_router
 from bot.keyboard import UserButtons
 from bot.middlewares import RegistrationMiddleware
+from bot.utils.services import load_car_type_names
 from config import conf
 from database import Driver
-from utils.services import load_car_type_names
 
 dp = Dispatcher()
 
