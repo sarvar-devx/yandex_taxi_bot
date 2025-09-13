@@ -29,4 +29,4 @@ class IsCustomer(Filter):
 
     async def __call__(self, message: Message) -> bool:
         user = await User.get(message.from_user.id)
-        return (user.driver_profile is None or not user.driver_profile.has_permission) and not user.is_admin
+        return user.driver_profile is None or not user.driver_profile.has_permission
