@@ -19,7 +19,7 @@ driver_info_router.callback_query.filter(IsDriver())
 
 @driver_info_router.callback_query(F.data.startswith("cancel"))
 async def cancel_callback_query(callback: CallbackQuery) -> None:
-    await callback.answer("Hazillashdingizmi 😄 kulguli, <b>Bekor qilindi</b>")
+    await callback.answer("Hazillashdingizmi 😄 kulguli, Bekor qilindi", show_alert=True)
     await callback.message.delete()
 
 
