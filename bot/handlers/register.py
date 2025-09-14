@@ -68,7 +68,7 @@ async def handle_phone_input(message: Message, state: FSMContext) -> None:
     user_data.update({
         'phone_number': phone_number,
     })
-    await User.update(message.from_user.id, **user_data)
+    await User.update(id_=message.from_user.id, **user_data)
     await greeting_user(message)
     await state.clear()
 

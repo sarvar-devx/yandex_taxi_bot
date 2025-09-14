@@ -15,8 +15,8 @@ command_router = Router()
 
 @command_router.message(DriverHasPermission(), CommandStart(), StateFilter(None))
 async def d_command_start_handler(message: Message, state: FSMContext) -> None:
-    await message.answer('Salom', reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
-    await state.clear()
+    await message.answer("Assalomu alaykum, haydovchi!\nIltimos, lokatsiyangizni yuboring 📍", reply_markup=driver_keyboard_btn().as_markup(resize_keyboard=True))
+    await state.set_state("driver_location")
 
 
 @command_router.message(IsDriver(), Command(commands='delete_driver_profile'), StateFilter(None))

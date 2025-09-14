@@ -4,45 +4,32 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters import DriverHasPermission
-from bot.keyboard import get_location
 from bot.utils.coordinate import calculate_arrival_time
-from database import Driver, DriverLocation, Order, User, CarType
+from database import Driver, DriverLocation, Order, User
 
 driver_router = Router()
 driver_router.message.filter(DriverHasPermission())
 driver_router.callback_query.filter(DriverHasPermission())
 
 
-@driver_router.message(StateFilter(None))
-async def driver_start(message: Message, state: FSMContext):
-    await message.answer(
-        "Assalomu alaykum, haydovchi!\nIltimos, lokatsiyangizni yuboring 📍",
-        reply_markup=get_location()
-    )
-    await state.set_state("driver_location")
-
-
 @driver_router.message(F.location, StateFilter("driver_location"))
 async def driver_send_location(message: Message, state: FSMContext):
-    try:
-        lat, lon = message.location.latitude, message.location.longitude
-        driver = await Driver.get(user_id=message.from_user.id, relationships=[Driver.car_type])
+    lat, lon = message.location.latitude, message.location.longitude
+    driver = await Driver.get(user_id=message.from_user.id, relationships=[Driver.car_type])
 
-        car_type = driver.car_type
-        toll = float(car_type.price)
+    toll = float(driver.car_type.price) if driver.car_type and driver.car_type.price else 0.0
 
+    location = await DriverLocation.get(driver_id=driver.id)
+    if location:
+        await location.update(latitude=lat, longitude=lon, toll=toll)
+    else:
         await DriverLocation.create(driver_id=driver.id, latitude=lat, longitude=lon, toll=toll)
 
-        await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖",
-                             reply_markup=ReplyKeyboardRemove())
-
-    except Exception as e:
-        await message.answer("❌ Xatolik yuz berdi. Qaytadan urinib ko'ring.")
-        print(f"Error: {e}")  # Debug
-    finally:
-        # Har qanday holatda state'ni tozalash
-        await state.clear()
-
+    await message.answer(
+        "📍 Lokatsiyangiz yangilandi. Buyurtmalarni kuting 🚖",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    await state.clear()
 
 @driver_router.callback_query(F.data.startswith("accept_order"))
 async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
@@ -60,17 +47,17 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
     # Buyurtmani qabul qilish
     order.status = Order.OrderStatus.ACCEPTED
     order.driver_id = driver.id  # Driver ID sini saqlash
-    await order.save()
+    await order.commit()
 
     driver.has_client = True  # Driver bandligini belgilash
-    await driver.save()
+    await driver.commit()
 
     # User ma'lumotlarini olish
     user = await User.get(id_=order.user_id)
     driver_user = await User.get(id_=driver.user_id)
 
     # Masofani hisoblash (order dan lat/lon olish)
-    driver_location = await DriverLocation.get(driver_id=driver.id)
+    driver_location = await DriverLocation.get(id_=driver.id)
     distance = 0  # Default qiymat
     if driver_location:
         from bot.utils.coordinate import haversine
@@ -95,7 +82,8 @@ Haydovchi kelmoqda ...
         await callback.bot.send_photo(
             chat_id=user.id,
             photo=driver.image,
-            caption=caption
+            caption=caption,
+            # add button canceled !!!
         )
     except:
         # Agar rasm yuborishda xatolik bo'lsa, faqat matn yuborish

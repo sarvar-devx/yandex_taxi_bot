@@ -65,8 +65,14 @@ class AbstractClass:
         return object_
 
     @classmethod
-    async def update(cls, id_=None, *, user_id=None, **kwargs):
-        condition = cls.id == id_ if id_ is not None else cls.user_id == user_id
+    async def update(cls, id_=None, *, user_id=None, driver_id=None, **kwargs):
+        if id_:
+            condition = (cls.id == id_)
+        elif user_id:
+            condition = (cls.user_id == user_id)
+        else:
+            condition = (cls.driver_id == driver_id)
+
         query = (
             sqlalchemy_update(cls)
             .where(condition)
@@ -77,9 +83,11 @@ class AbstractClass:
         await cls.commit()
 
     @classmethod
-    async def get(cls, id_=None, *, user_id=None, relationships: list | None = None):
+    async def get(cls, id_=None, *, user_id=None, driver_id=None, relationships: list | None = None):
         if id_:
             query = select(cls).where(cls.id == id_)
+        elif driver_id:
+            query = select(cls).where(cls.driver_id == driver_id)
         else:
             query = select(cls).where(cls.user_id == user_id)
         if relationships:

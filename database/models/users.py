@@ -1,7 +1,6 @@
-from enum import Enum
-
 from sqlalchemy import String, Boolean, ForeignKey, Float, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from database.base import TimeBaseModel
 
 
@@ -22,13 +21,6 @@ class User(TimeBaseModel):
 class Address(TimeBaseModel):
     __tablename__ = "addresses"
 
-    class AddressType(Enum):
-        HOME = "home"                   # Uy manzili
-        WORK = "work"                   # Ish joyi
-        PICKUP = "pickup"               # Olib ketish nuqtasi
-        DESTINATION = "destination"     # Borish nuqtasi
-        FAVORITE = "favorite"           # Sevimli joy
-
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["User"] = relationship("User", back_populates="addresses")
 
@@ -37,8 +29,6 @@ class Address(TimeBaseModel):
     longitude: Mapped[float] = mapped_column(Float)
 
     # Manzil ma'lumotlari
-    address_type: Mapped[AddressType] = mapped_column(default=AddressType.PICKUP)
-    title: Mapped[str] = mapped_column(String(100), nullable=True)  # "Uy", "Ish", "Do'kon"
     full_address: Mapped[str] = mapped_column(Text, nullable=True)  # To'liq manzil
 
     # Qo'shimcha ma'lumotlar
@@ -50,5 +40,5 @@ class Address(TimeBaseModel):
                                                         foreign_keys="[Order.pickup_address_id]",
                                                         back_populates="pickup_address")
     destination_orders: Mapped[list["Order"]] = relationship("Order",
-                                                        foreign_keys="[Order.destination_address_id]",
-                                                        back_populates="destination_address")
+                                                             foreign_keys="[Order.destination_address_id]",
+                                                             back_populates="destination_address")
