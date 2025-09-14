@@ -8,7 +8,7 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from bot.keyboard.inline import driver_order_keyboard
 from bot.filters import DriverHasPermission
 from bot.keyboard import get_location
-from database import Driver, DriverLocation, Order, User
+from database import Driver, DriverLocation, Order, User, CarType
 
 driver_router = Router()
 driver_router.message.filter(DriverHasPermission())
@@ -28,10 +28,18 @@ async def driver_start(message: Message, state: FSMContext):
 async def driver_send_location(message: Message, state: FSMContext):
     lat, lon = message.location.latitude, message.location.longitude
     driver = await Driver.get(user_id=message.from_user.id)
+
+    if driver.car_type_id:
+        car_type = await CarType.get(driver.car_type_id)
+        toll = car_type.price
+    else:
+        toll = 5000
+
     await DriverLocation.create(
         driver_id=driver.id,
         latitude=lat,
-        longitude=lon
+        longitude=lon,
+        toll=toll
     )
     await message.answer("📍 Lokatsiyangiz saqlandi. Buyurtmalarni kuting 🚖", reply_markup=ReplyKeyboardRemove())
     await state.clear()
