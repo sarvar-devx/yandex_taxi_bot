@@ -1,7 +1,7 @@
 from aiogram import Router
 
 from bot.filters import IsAdmin
-from bot.handlers.admin.base import admin_router
+from bot.handlers.admin.base import admin_router, driver_candidates
 from bot.handlers.admin.car_type import car_type_router
 
 admin_routers = Router()
