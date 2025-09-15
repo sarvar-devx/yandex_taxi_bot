@@ -4,6 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from database import Driver
 
+
 def driver_order_keyboard(order_id: int):
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -80,9 +81,12 @@ def make_inline_keyboard(buttons: list[tuple[str, str]], row_width: int = 2):
     ikb.adjust(row_width)
     return ikb.as_markup()
 
-# ISHLATILISHI
 
-# driver_offer_kb = make_inline_keyboard([
-#     ("✅ Qabul qilaman", "driver_accept"),
-#     ("❌ Rad etaman", "driver_decline")
-# ])
+def car_types_list_buttons(car_types) -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardBuilder()
+
+    for car_type in car_types:
+        ikb.row(InlineKeyboardButton(text=car_type.name.upper(), callback_data=f"car_type_info_{car_type.id}"))
+
+    ikb.adjust(2)
+    return ikb.as_markup()

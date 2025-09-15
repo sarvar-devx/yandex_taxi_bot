@@ -28,7 +28,7 @@ async def delete_driver_command_handler(message: Message) -> None:
 
 @command_router.message(IsAdmin(), CommandStart(), StateFilter(None))
 async def admin_command_start_handler(message: Message) -> None:
-    await message.answer('Salom', reply_markup=admin_keyboard_btn().as_markup(resize_keyboard=True))
+    await message.answer('Salom', reply_markup=admin_keyboard_btn())
 
 
 @command_router.message(CommandStart(), StateFilter(None))

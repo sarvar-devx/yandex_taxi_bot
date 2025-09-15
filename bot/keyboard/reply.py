@@ -21,6 +21,7 @@ class DriverButtons:
 class AdminButtons:
     DRIVER_CANDIDATES = "🚖Taxistlikga nomzodlar 👥"
     NEW_CAR_TYPE = "Yangi mashina toifasini qo'shish"
+    CAR_TYPES = "🚘🚖 Mashina toifalari"
 
 
 def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
@@ -37,10 +38,14 @@ def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
     return main_keyboard
 
 
-def admin_keyboard_btn() -> ReplyKeyboardBuilder:
+def admin_keyboard_btn() -> ReplyKeyboardMarkup:
     admin_keyboard = main_keyboard_btn()
     admin_keyboard.row(KeyboardButton(text=AdminButtons.DRIVER_CANDIDATES))
-    admin_keyboard.row(KeyboardButton(text=AdminButtons.NEW_CAR_TYPE))
+    admin_keyboard.row(KeyboardButton(text=AdminButtons.CAR_TYPES))
+    admin_keyboard.adjust(2, repeat=True)
+    admin_keyboard = admin_keyboard.as_markup(resize_keyboard=True)
+    for row in admin_keyboard.keyboard:
+        row[:] = [btn for btn in row if btn.text != UserButtons.BECOME_DRIVER]
     return admin_keyboard
 
 

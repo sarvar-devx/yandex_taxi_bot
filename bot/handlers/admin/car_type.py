@@ -1,13 +1,56 @@
 from aiogram import F
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
+    KeyboardButton
 
-from bot.keyboard import AdminButtons, back_button_markup
-from bot.utils.states import CarTypeStates
+from bot.handlers.commands import admin_command_start_handler
+from bot.keyboard import AdminButtons, back_button_markup, car_types_list_buttons, UserButtons
+from bot.utils.states import CarTypeStates, ChangeCarTypePriceStates
 from database.models import CarType
 
 car_type_router = Router()
+
+
+@car_type_router.message(F.text == AdminButtons.CAR_TYPES)
+async def car_types_handler(message: Message):
+    car_types = await CarType.all()
+    await message.answer("Mahina toifalari: 👇", reply_markup=car_types_list_buttons(car_types))
+    await message.answer("Tanlang: ",
+                         reply_markup=ReplyKeyboardMarkup(keyboard=[
+                             [KeyboardButton(text=AdminButtons.NEW_CAR_TYPE), KeyboardButton(text=UserButtons.BACK)]],
+                             resize_keyboard=True))
+
+
+@car_type_router.callback_query(F.data.startswith("car_type_info"))
+async def car_type_info_handler(callback: CallbackQuery):
+    car_type = await CarType.get(int(callback.data.split("_")[-1]))
+    await callback.answer(car_type.name, show_alert=True)
+    await callback.message.delete()
+    await callback.message.answer(
+        f"Moshina toifasi 🚘: <u><b><i>{car_type.name}</i></b></u>\nNarxi 💰(km): <b><i>{car_type.price}</i></b>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Narxini o'zgartirish", callback_data=f"change_car_type_price_{car_type.id}")]]))
+
+
+@car_type_router.callback_query(F.data.startswith("change_car_type_price"))
+async def change_car_type_price_handler(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Narxni kirting: 👇")
+    await callback.message.delete()
+    await state.update_data(id=int(callback.data.split("_")[-1]))
+    await state.set_state(ChangeCarTypePriceStates.price)
+
+
+@car_type_router.message(ChangeCarTypePriceStates.price)
+async def change_car_type_price_state_handler(message: Message, state: FSMContext):
+    data = await state.get_data()
+    try:
+        await CarType.update(data['id'], price=int(message.text))
+        await message.answer("Muvoffaqiyatli o'zgartirildi!")
+        await state.clear()
+        await admin_command_start_handler(message)
+    except Exception as error:
+        await message.answer(f"<blockquote>Hatolik: </blockquote>{error}")
 
 
 @car_type_router.message(F.text == AdminButtons.NEW_CAR_TYPE)

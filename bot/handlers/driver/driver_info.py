@@ -31,7 +31,7 @@ async def confirm_driving(callback: CallbackQuery, bot: Bot) -> None:
     for admin in admins:
         await bot.copy_message(admin.id, callback.from_user.id, callback.message.message_id)
         await bot.send_message(admin.id, "Taxistlikga nomzodlar bor",
-                               reply_markup=admin_keyboard_btn().as_markup(resize_keyboard=True))
+                               reply_markup=admin_keyboard_btn())
 
     await callback.answer("Tekshirish uchun adminga yuborildi", show_alert=True)
 

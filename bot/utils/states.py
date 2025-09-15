@@ -43,3 +43,8 @@ class OrderStates(StatesGroup):
 class CarTypeStates(StatesGroup):
     name = State()
     price = State()
+
+
+class ChangeCarTypePriceStates(StatesGroup):
+    id = State()
+    price = State()

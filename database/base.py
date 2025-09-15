@@ -118,7 +118,7 @@ class AbstractClass:
 
     @classmethod
     async def count_by(cls, criteria):
-        return (await db.execute(select(func.cSount()).select_from(cls).where(criteria))).scalar()
+        return (await db.execute(select(func.count()).select_from(cls).where(criteria))).scalar()
 
     @classmethod
     async def all(cls):
