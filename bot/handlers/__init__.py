@@ -1,4 +1,4 @@
-from bot.handlers.admin import admin_router
+from bot.handlers.admin import admin_routers
 from bot.handlers.commands import command_router
 from bot.handlers.driver import driver_router
 from bot.handlers.driver_info import driver_info_router

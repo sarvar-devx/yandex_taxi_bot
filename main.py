@@ -8,7 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BotCommand, BotCommandScopeChat, Message, Update
 
-from bot.handlers import command_router, main_router, register_router, user_router, driver_router, admin_router, \
+from bot.handlers import command_router, main_router, register_router, user_router, driver_router, admin_routers, \
     driver_info_router
 from bot.keyboard import UserButtons
 from bot.middlewares import RegistrationMiddleware
@@ -58,7 +58,7 @@ async def main_polling():
         register_router,
         user_router,
         driver_router,
-        admin_router,
+        admin_routers,
         driver_info_router
     )
     await load_car_type_names()
