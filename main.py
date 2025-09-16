@@ -19,7 +19,7 @@ dp = Dispatcher()
 
 
 @main_router.message(F.text == UserButtons.BACK)
-async def back_admin_menu_handler(message: Message, state: FSMContext):
+async def back_to_menu_handler(message: Message, state: FSMContext):
     await state.clear()
     # /start komandasi kabi yangi Update yasash
     fake_message = message.model_copy(update={"text": "/start"})
