@@ -78,7 +78,6 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         status=Order.OrderStatus.PENDING,  # Kutilmoqda
         pickup_address_id=address.id,
         estimated_price=car_type.price,
-
     )
     # ================================================
     nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])

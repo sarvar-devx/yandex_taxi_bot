@@ -34,6 +34,7 @@ async def driver_send_location(message: Message, state: FSMContext):
 @driver_router.callback_query(F.data.startswith("accept_order"))
 async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
     order_id = int(callback.data.split(":")[1])
+    # nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])
 
     # Ma'lumotlarni olish
     order = await Order.get(id_=order_id)
@@ -57,14 +58,15 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
     driver_user = await User.get(id_=driver.user_id)
 
     # Masofani hisoblash (order dan lat/lon olish)
-    driver_location = await DriverLocation.get(id_=driver.id)
-    distance = 0  # Default qiymat
+    driver_location = await DriverLocation.get(driver_id=driver.id)
+    distance = 0                                            # Default qiymat
     if driver_location:
         from bot.utils.coordinate import haversine
         distance = haversine(
             order.pickup_latitude, order.pickup_longitude,
             driver_location.latitude, driver_location.longitude
         )
+    # nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])
 
     # ENDI userga driver ma'lumotlarini yuborish
     caption = f""" ✅ Sizning buyurtmangizni driver qabul qildi! 🚖
@@ -97,6 +99,12 @@ Haydovchi kelmoqda ...
         reply_markup=None  # Tugmalarni olib tashlash
     )
 
+    await callback.bot.send_location(
+        chat_id=driver.user_id,
+        latitude=order.pickup_latitude,
+        longitude=order.pickup_longitude
+    )
+
     await callback.answer("✅ Buyurtma qabul qilindi!")
 
 
@@ -105,8 +113,11 @@ async def driver_reject_order(callback: CallbackQuery, state: FSMContext):
     order_id = int(callback.data.split(":")[1])
 
     order = await Order.get(id_=order_id)
+    driver = await Driver.get(user_id=callback.from_user.id)
+
     order.status = Order.OrderStatus.CANCELLED
-    await order.save()
+    order.driver_id = driver.id
+    await order.commit()
 
     # User ga xabar berish
     user = await User.get(id_=order.user_id)
