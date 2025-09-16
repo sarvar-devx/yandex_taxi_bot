@@ -1,4 +1,4 @@
-from sqlalchemy import String, Boolean, ForeignKey, Float, Text
+from sqlalchemy import String, Boolean, ForeignKey, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.base import TimeBaseModel
@@ -27,9 +27,6 @@ class Address(TimeBaseModel):
     # Koordinatalar
     latitude: Mapped[float] = mapped_column(Float)
     longitude: Mapped[float] = mapped_column(Float)
-
-    # Manzil ma'lumotlari
-    full_address: Mapped[str] = mapped_column(Text, nullable=True)  # To'liq manzil
 
     # Qo'shimcha ma'lumotlar
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

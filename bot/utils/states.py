@@ -31,13 +31,11 @@ class DriverUpdateStates(StatesGroup):
 
 
 class OrderStates(StatesGroup):
-    location = State()
-    latitude = State()
-    longitude = State()
+    pickup_location = State()
+    drop_location = State()
     order_type = State()
     driver_id = State()
     user_id = State()
-    address = State()
 
 
 class CarTypeStates(StatesGroup):

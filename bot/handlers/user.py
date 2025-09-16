@@ -1,10 +1,10 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 import bot.utils.services as services
 from bot.filters import IsCustomer
-from bot.keyboard import user_order_type, UserButtons, get_location
+from bot.keyboard import user_order_type, UserButtons, get_location, back_button_markup
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from bot.utils.states import OrderStates
 from database import Order, User, Driver, CarType, Address
@@ -21,33 +21,40 @@ async def order_taxi(message: Message, state: FSMContext) -> None:
     - Set state to `location`
     - Ask user to send location
     """
-    await state.set_state(OrderStates.location)
+    await state.set_state(OrderStates.pickup_location)
     await message.reply("Iltimos manzilingizni yuboring 📌", reply_markup=get_location())
 
 
-@user_router.message(OrderStates.location, F.location)
-async def order_location(message: Message, state: FSMContext) -> None:
+@user_router.message(OrderStates.pickup_location, F.location)
+async def order_get_pickup_location(message: Message, state: FSMContext) -> None:
     """
     Handle user location:
     - Save latitude & longitude
     - Set state to `order_type`
     - Ask user to choose car type
     """
-    lat, lon = message.location.latitude, message.location.longitude
-    await state.update_data(latitude=lat, longitude=lon)
-    await state.set_state(OrderStates.address)
-    await message.answer(text="Manzilingiz olindi! 📌", reply_markup=ReplyKeyboardRemove())
-    await message.answer(text="Bormoqchi bo'lgan manzilingizni To'liq kiriting va yuboring 👇🏻!!!", )
-
-    # await message.answer(text="🔙 Orqaga", reply_markup=back_button_markup)
+    await state.update_data(pickup_location=message.location)
+    await state.set_state(OrderStates.drop_location)
+    await message.answer(text="Manzilingiz olindi! 📌", reply_markup=back_button_markup)
+    await message.answer(text="Bormoqchi bo'lgan manzilingizni lakatsiya-sini yuboring 👇🏻!!!")
 
 
-@user_router.message(OrderStates.address)
-async def order_address(message: Message, state: FSMContext) -> None:
+@user_router.message(OrderStates.drop_location)
+async def order_get_drop_location(message: Message, state: FSMContext) -> None:
+    if not message.location:
+        await message.answer("🤬 Kalla sanga lakatsiya yubor dedim 📍(lakatsiya yubor)")
+        await state.set_state(OrderStates.drop_location)
+        return
+
     car_types = await CarType.all()
-    await state.update_data(address=message.text)
-    await state.set_state(OrderStates.order_type)
+    await state.update_data(drop_location=message.location)
+    rate_price_msg = "🚖 Tariflar narxi: \n"
+
+    for car_type in car_types:
+        rate_price_msg += f"{car_type.name}: {car_type.price}\n"
+    await message.answer(rate_price_msg)
     await message.answer(text="Sizga Maqul keladigan Moshina turi 👇🏻", reply_markup=user_order_type(car_types))
+    await state.set_state(OrderStates.order_type)
 
 
 @user_router.callback_query(OrderStates.order_type, lambda c: c.data in services.CAR_TYPE_NAMES)
@@ -61,26 +68,29 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     await state.update_data(order_type=callback.data)
     user = await User.get(id_=callback.from_user.id)
     data = await state.get_data()
+    pickup_lat, pickup_lon = data['pickup_location'].latitude, data['pickup_location'].longitude
+
     # ========== YANGI QISM - BUYURTMA YARATISH ==========
     address = await Address.create(
         user_id=user.id,
-        latitude=data['latitude'],
-        longitude=data['longitude'],
-        full_address=data['address'],
+        latitude=pickup_lat,
+        longitude=pickup_lon
     )
 
     car_type = (await CarType.filter(CarType.name == callback.data))[0]
     order = await Order.create(
         user_id=user.id,
         car_type_id=car_type.id,
-        pickup_latitude=data['latitude'],
-        pickup_longitude=data['longitude'],
+        pickup_latitude=pickup_lat,
+        pickup_longitude=pickup_lon,
+        drop_latitude=data['drop_location'].latitude,
+        drop_longitude=data['drop_location'].longitude,
         status=Order.OrderStatus.PENDING,  # Kutilmoqda
         pickup_address_id=address.id,
         estimated_price=car_type.price,
     )
     # ================================================
-    nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])
+    nearest_driver, distance = await get_nearest_driver(pickup_lat, pickup_lon)
 
     if nearest_driver:
         user = await User.get(id_=callback.from_user.id)
