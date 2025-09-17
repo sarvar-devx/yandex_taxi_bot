@@ -5,6 +5,20 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from database import Driver
 
 
+# The driver has arrived,
+
+def the_driver_has_arrived_keyboard(order_id: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Yetib keldim", callback_data=f"driver_arrived: {order_id}"),
+                InlineKeyboardButton(text="Ketdik", callback_data=f"we_left: {order_id}"),
+                InlineKeyboardButton(text="Mijoz manzilda", callback_data=f"we_arrived.: {order_id}")
+            ]
+        ]
+    )
+
+
 def driver_order_keyboard(order_id: int):
     return InlineKeyboardMarkup(
         inline_keyboard=[
