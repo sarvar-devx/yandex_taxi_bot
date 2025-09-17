@@ -31,6 +31,7 @@ async def driver_send_location(message: Message, state: FSMContext):
     )
     await state.clear()
 
+
 @driver_router.callback_query(F.data.startswith("accept_order"))
 async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
     order_id = int(callback.data.split(":")[1])
@@ -59,7 +60,7 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
 
     # Masofani hisoblash (order dan lat/lon olish)
     driver_location = await DriverLocation.get(driver_id=driver.id)
-    distance = 0                                            # Default qiymat
+    distance = 0  # Default qiymat
     if driver_location:
         from bot.utils.coordinate import haversine
         distance = haversine(
