@@ -1,16 +1,126 @@
-from aiogram import Router, F
+import time
+
+from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters import DriverHasPermission
-from bot.utils.coordinate import calculate_arrival_time
-from database import Driver, DriverLocation, Order, User
+from bot.keyboard import the_driver_has_arrived_keyboard
+from bot.utils.coordinate import calculate_arrival_time, haversine
+from database import Driver, DriverLocation, Order, User, CarType
 
 driver_router = Router()
 driver_router.message.filter(DriverHasPermission())
 driver_router.callback_query.filter(DriverHasPermission())
 
+driver_waiting_times = {}  # {order_id: start_time}
+
+
+# Vaxtni xisoblash funksiyasi
+def calculate_extra_fee(order_id: int):
+    start_time = driver_waiting_times.get(order_id)
+    if not start_time:
+        return 0, 0
+
+    wait_minutes = (time.time() - start_time) / 60
+    extra_minutes = max(0, wait_minutes - 5)
+    extra_fee = int(extra_minutes) * 1000
+
+    return int(wait_minutes), extra_fee
+
+
+# Mijozni kutish
+@driver_router.callback_query(F.data.startswith("driver_arrived"))
+async def driver_arrived_button(callback: CallbackQuery, bot: Bot):
+    order_id = int(callback.data.split(":")[1])
+    order = await Order.get(order_id)
+    user_id = order.user_id
+
+    # Kutish uchun start time
+    driver_waiting_times[order_id] = time.time()
+
+    await bot.send_message(
+        chat_id=user_id,
+        text="🚖 Sizning haydovchingiz yetib keldi! "
+             "\nHaydovchi sizni 5 daqiqa tekin kutadi keyin"
+             "\ndaqiqasiga 1000 so'mdan echadi"
+    )
+    wit_minutes, extra_fee = calculate_extra_fee(order_id)
+
+    await callback.message.edit_text(
+        "Mijozga xabar yuborildi",
+        reply_markup=the_driver_has_arrived_keyboard(order_id)
+    )
+
+
+# Harakatni boshlash
+@driver_router.callback_query(F.data.startswith("we_left"))
+async def driver_we_left_button(callback: CallbackQuery, bot: Bot):
+    order_id = int(callback.data.split(":")[1])
+
+    wit_minutes, extra_fee = calculate_extra_fee(order_id)
+
+    await callback.message.edit_text(
+        f"🚖 Yo‘lga chiqildi!\n⌛ Kutish vaqti: {wit_minutes:.1f} daqiqa\n"
+        f"💰 Qo‘shimcha to‘lov: {extra_fee} so‘m"
+    )
+    await callback.message.edit_text("Yolga chiqildi")
+
+
+# Yetib keish vaxtini xisoblash
+@driver_router.callback_query(F.data.startswith("we_arrived"))
+async def driver_we_arrived_button(callback: CallbackQuery, bot: Bot):
+    order_id = int(callback.data.split(":")[1])
+    order = await Order.get(order_id)
+    user_id = order.user_id
+
+    # === Asosiy km narxi ===
+    distance = haversine(
+        order.pickup_latitude, order.pickup_longitude,
+        order.drop_latitude, order.drop_longitude
+    )
+    car_type = await CarType.get(order.car_type_id)
+    base_price = distance * car_type.price
+
+    wait_minutes, extra_fee = calculate_extra_fee(order_id)
+
+    # === Yakuniy summa ===
+    total_price = int(base_price) + extra_fee
+
+    # Buyurtma yakunlanadi
+    order.status = Order.OrderStatus.COMPLETED
+    await order.commit()
+
+    user = await User.get(order.user_id)
+    await callback.bot.send_message(
+        chat_id=user.id,
+        text=(
+            f"✅ Siz manzilingizga yetib keldingiz!\n\n"
+            f"📍 Masofa: {distance:.2f} km\n"
+            f"💰 Asosiy narx: {int(base_price):,} so'm\n"
+            f"⏱ Kutish vaqti: {wait_minutes:.1f} daqiqa\n"
+            f"➕ Qo'shimcha: {extra_fee:,} so'm\n\n"
+            f"💵 Jami to'lov: <b>{total_price:,} so'm</b>"
+        )
+    )
+
+    await callback.message.edit_text(
+        f"✅ Buyurtma yakunlandi!\n"
+        f"Kutish: {wait_minutes:.1f} daqiqa\n"
+        f"Qo‘shimcha to‘lov: {extra_fee} so‘m"
+    )
+
+    # === Haydovchiga ham xabar beramiz ===
+    await callback.message.edit_text(
+        f"Mijoz manzilda ✅\nUmumiy summa: {total_price:,} so'm"
+    )
+
+    # Kutish vaqtini tozalash
+    driver_waiting_times.pop(order_id, None)
+
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 @driver_router.message(F.location, StateFilter("driver_location"))
 async def driver_send_location(message: Message, state: FSMContext):
@@ -75,7 +185,7 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
 👤 Driver: {driver_user.first_name} {driver_user.last_name}
 🚗 Mashina: {driver.car_brand} ({driver.car_number})
 📍 Masofa: {distance:.2f} km
-🕐  Kelish vaqti: {await calculate_arrival_time(distance)}
+🕐  Haydovchi: {await calculate_arrival_time(distance)} daqiqada keladi
 
 Haydovchi kelmoqda ...
     """
@@ -97,7 +207,7 @@ Haydovchi kelmoqda ...
         text=f"✅ Buyurtmani qabul qildingiz!\n\n"
              f"👤 Mijoz: {user.first_name}\n"
              f"📍 Mijoz lokatsiyasi yuborildi",
-        reply_markup=None  # Tugmalarni olib tashlash
+        reply_markup=the_driver_has_arrived_keyboard(order_id)  # Tugmalarni olib tashlash
     )
 
     await callback.bot.send_location(

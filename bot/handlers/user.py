@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 import bot.utils.services as services
 from bot.filters import IsCustomer
 from bot.keyboard import user_order_type, UserButtons, get_location, back_button_markup
+from bot.keyboard.inline import driver_order_keyboard
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from bot.utils.states import OrderStates
 from database import Order, User, Driver, CarType, Address
@@ -101,12 +102,7 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         )
 
         driver = await Driver.get(id_=nearest_driver)
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [
-                InlineKeyboardButton(text="✅ Qabul qilish", callback_data=f"accept_order:{order.id}"),
-                InlineKeyboardButton(text="❌ Rad etish", callback_data=f"reject_order:{order.id}")
-            ]
-        ])
+        keyboard = driver_order_keyboard(order_id=order.id)
 
         await callback.bot.send_message(
             chat_id=driver.user_id,  # Driver telegram ID

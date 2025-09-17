@@ -59,7 +59,7 @@ async def give_car_type(callback: CallbackQuery):
     msg = driver_info_msg(driver)
     await callback.message.edit_media(
         media=InputMediaPhoto(media=driver.image,
-                              caption=msg + "\n\n------------<b>Userga taxistlik xuquqi berasizmi</b>------------"),
+                              caption=msg + "\n\n----------<b>Userga taxistlik xuquqi berasizmi</b>----------"),
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Ha beraman 🚖",
