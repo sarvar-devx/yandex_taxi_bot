@@ -73,16 +73,16 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     pickup_lat, pickup_lon = data['pickup_location'].latitude, data['pickup_location'].longitude
 
     # --- 1. Shartlarga mos haydovchilarni olish ---
-    drivers = await Driver.filter(
-        (Driver.is_active == True) &
-        (Driver.has_client == False) &
-        (Driver.car_type_id == car_type.id)
-    )
+    # drivers = await Driver.filter(
+    #     (Driver.is_active == True) &
+    #     (Driver.has_client == False) &
+    #     (Driver.car_type_id == car_type.id)
+    # )
 
-    if not drivers:
-        await callback.message.answer("❌ Mos keladigan haydovchi topilmadi")
-        await state.clear()
-        return
+    # if not drivers:
+    #     await callback.message.answer("❌ Mos keladigan haydovchi topilmadi")
+    #     await state.clear()
+    #     return
 
 
     # ========== YANGI QISM - BUYURTMA YARATISH ==========
@@ -139,6 +139,8 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         await order.delete(id_=order.id)
         await callback.message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
     await state.clear()
+    await callback.message.delete()
+
 
 
 @user_router.message(F.text == UserButtons.ORDER_HISTORY)

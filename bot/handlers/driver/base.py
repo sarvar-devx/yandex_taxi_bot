@@ -64,7 +64,7 @@ async def driver_we_left_button(callback: CallbackQuery, bot: Bot):
         f"💰 Qo‘shimcha to‘lov: {extra_fee} so‘m",
         reply_markup=the_driver_has_arrived_keyboard(order_id, step="left")
     )
-    await callback.message.edit_text("Yolga chiqildi")
+    # await callback.message.edit_text("Yolga chiqildi")
 
 
 # Yetib keish vaxtini xisoblash
@@ -111,7 +111,7 @@ async def driver_we_arrived_button(callback: CallbackQuery, bot: Bot):
     )
 
     # === Haydovchiga ham xabar beramiz ===
-    await callback.message.answer(
+    await callback.message.edit_text(
         f"Mijoz manzilda ✅\nUmumiy summa: {total_price:,} so'm"
     )
 
@@ -216,6 +216,7 @@ Haydovchi kelmoqda ...
     )
 
     await callback.answer("✅ Buyurtma qabul qilindi!")
+    await callback.message.delete()
 
 
 @driver_router.callback_query(F.data.startswith("reject_order"))
@@ -243,3 +244,4 @@ async def driver_reject_order(callback: CallbackQuery, state: FSMContext):
     )
 
     await callback.answer("Buyurtma rad etildi")
+    await callback.message.delete()
