@@ -30,6 +30,7 @@ async def get_nearest_driver(lat: float, lon: float):
 
     return nearest_driver, min_distance
 
+
 async def calculate_arrival_time(distance: float) -> str:
     """
     Masofaga qarab taxminiy kelish vaqtini hisoblaydi.
@@ -46,8 +47,3 @@ async def calculate_arrival_time(distance: float) -> str:
         hours = minutes // 60
         mins = minutes % 60
         return f"{hours} soat {mins} daqiqa"
-
-
-
-
-

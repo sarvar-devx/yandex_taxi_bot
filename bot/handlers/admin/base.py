@@ -1,4 +1,5 @@
 from aiogram import Router, F, Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, CopyTextButton, \
     InputMediaPhoto
 
@@ -44,7 +45,10 @@ async def give_car_type(callback: CallbackQuery):
     callback_data = callback.data.split()
     driver_id = int(callback_data[-1])
     driver = await Driver.get(user_id=driver_id, relationships=[Driver.user, Driver.car_type])
-    await callback.bot.delete_message(callback.message.chat.id, callback.message.message_id + 1)
+    try:
+        await callback.bot.delete_message(callback.message.chat.id, callback.message.message_id + 1)
+    except TelegramBadRequest as e:
+        await callback.message.answer(str(e))
     if not driver or driver.has_permission:
         await callback.answer("Bu driverda permission bor yoki driver aniqlanmadi", show_alert=True)
         return
