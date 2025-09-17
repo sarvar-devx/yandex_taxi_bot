@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery
 
 import bot.utils.services as services
 from bot.filters import IsCustomer
@@ -37,7 +37,8 @@ async def order_get_pickup_location(message: Message, state: FSMContext) -> None
     await state.update_data(pickup_location=message.location)
     await state.set_state(OrderStates.drop_location)
     await message.answer(text="Manzilingiz olindi! 📌", reply_markup=back_button_markup)
-    await message.answer(text="Bormoqchi bo'lgan manzilingizni lakatsiya-sini yuboring 👇🏻!!!")
+    await message.answer(text="Bormoqchi bo'lgan manzilingizni yuboring 👇🏻!!!",
+                         reply_markup=get_location())
 
 
 @user_router.message(OrderStates.drop_location)
@@ -70,6 +71,19 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     user = await User.get(id_=callback.from_user.id)
     data = await state.get_data()
     pickup_lat, pickup_lon = data['pickup_location'].latitude, data['pickup_location'].longitude
+
+    # --- 1. Shartlarga mos haydovchilarni olish ---
+    drivers = await Driver.filter(
+        (Driver.is_active == True) &
+        (Driver.has_client == False) &
+        (Driver.car_type_id == car_type.id)
+    )
+
+    if not drivers:
+        await callback.message.answer("❌ Mos keladigan haydovchi topilmadi")
+        await state.clear()
+        return
+
 
     # ========== YANGI QISM - BUYURTMA YARATISH ==========
     address = await Address.create(

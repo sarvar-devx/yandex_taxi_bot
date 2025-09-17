@@ -16,6 +16,9 @@ def haversine(lat1, lon1, lat2, lon2):
 async def get_nearest_driver(lat: float, lon: float):
     drivers_locations = await DriverLocation.all()
 
+    # drivers_ids = [d.id for d in drivers]
+    # drivers_locations = await DriverLocation.filter(driver_in=drivers_ids)
+
     nearest_driver = None
     min_distance = float("inf")
 

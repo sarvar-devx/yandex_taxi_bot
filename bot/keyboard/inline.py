@@ -6,17 +6,26 @@ from database import Driver
 
 
 # The driver has arrived,
+def the_driver_has_arrived_keyboard(order_id: int, step: str):
+    buttons = []
 
-def the_driver_has_arrived_keyboard(order_id: int):
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Yetib keldim", callback_data=f"driver_arrived: {order_id}"),
-                InlineKeyboardButton(text="Ketdik", callback_data=f"we_left: {order_id}"),
-                InlineKeyboardButton(text="Mijoz manzilda", callback_data=f"we_arrived.: {order_id}")
-            ]
+    if step == "start":
+        buttons = [
+            InlineKeyboardButton(text="Yetib keldim", callback_data=f"driver_arrived:{order_id}"),
+            InlineKeyboardButton(text="Ketdik", callback_data=f"we_left:{order_id}"),
+            InlineKeyboardButton(text="Mijoz manzilda", callback_data=f"we_arrived:{order_id}")
         ]
-    )
+    elif step == "arrived":
+        buttons = [
+            InlineKeyboardButton(text="Ketdik", callback_data=f"we_left:{order_id}"),
+            InlineKeyboardButton(text="Mijoz manzilda", callback_data=f"we_arrived:{order_id}")
+        ]
+    elif step == "left":
+        buttons = [
+            InlineKeyboardButton(text="Mijoz manzilda", callback_data=f"we_arrived:{order_id}")
+        ]
+
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 
 def driver_order_keyboard(order_id: int):

@@ -26,7 +26,6 @@ def calculate_extra_fee(order_id: int):
     wait_minutes = (time.time() - start_time) / 60
     extra_minutes = max(0, wait_minutes - 5)
     extra_fee = int(extra_minutes) * 1000
-
     return int(wait_minutes), extra_fee
 
 
@@ -46,11 +45,11 @@ async def driver_arrived_button(callback: CallbackQuery, bot: Bot):
              "\nHaydovchi sizni 5 daqiqa tekin kutadi keyin"
              "\ndaqiqasiga 1000 so'mdan echadi"
     )
-    wit_minutes, extra_fee = calculate_extra_fee(order_id)
+    # wit_minutes, extra_fee = calculate_extra_fee(order_id)
 
     await callback.message.edit_text(
         "Mijozga xabar yuborildi",
-        reply_markup=the_driver_has_arrived_keyboard(order_id)
+        reply_markup=the_driver_has_arrived_keyboard(order_id, step="arrived")
     )
 
 
@@ -58,12 +57,12 @@ async def driver_arrived_button(callback: CallbackQuery, bot: Bot):
 @driver_router.callback_query(F.data.startswith("we_left"))
 async def driver_we_left_button(callback: CallbackQuery, bot: Bot):
     order_id = int(callback.data.split(":")[1])
-
     wit_minutes, extra_fee = calculate_extra_fee(order_id)
 
     await callback.message.edit_text(
         f"🚖 Yo‘lga chiqildi!\n⌛ Kutish vaqti: {wit_minutes:.1f} daqiqa\n"
-        f"💰 Qo‘shimcha to‘lov: {extra_fee} so‘m"
+        f"💰 Qo‘shimcha to‘lov: {extra_fee} so‘m",
+        reply_markup=the_driver_has_arrived_keyboard(order_id, step="left")
     )
     await callback.message.edit_text("Yolga chiqildi")
 
@@ -105,14 +104,14 @@ async def driver_we_arrived_button(callback: CallbackQuery, bot: Bot):
         )
     )
 
-    await callback.message.edit_text(
+    await callback.message.answer(
         f"✅ Buyurtma yakunlandi!\n"
         f"Kutish: {wait_minutes:.1f} daqiqa\n"
         f"Qo‘shimcha to‘lov: {extra_fee} so‘m"
     )
 
     # === Haydovchiga ham xabar beramiz ===
-    await callback.message.edit_text(
+    await callback.message.answer(
         f"Mijoz manzilda ✅\nUmumiy summa: {total_price:,} so'm"
     )
 
@@ -177,7 +176,6 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
             order.pickup_latitude, order.pickup_longitude,
             driver_location.latitude, driver_location.longitude
         )
-    # nearest_driver, distance = await get_nearest_driver(data['latitude'], data['longitude'])
 
     # ENDI userga driver ma'lumotlarini yuborish
     caption = f""" ✅ Sizning buyurtmangizni driver qabul qildi! 🚖
@@ -185,6 +183,7 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
 👤 Driver: {driver_user.first_name} {driver_user.last_name}
 🚗 Mashina: {driver.car_brand} ({driver.car_number})
 📍 Masofa: {distance:.2f} km
+📱 Aloqa: {driver_user.phone_number}
 🕐  Haydovchi: {await calculate_arrival_time(distance)} daqiqada keladi
 
 Haydovchi kelmoqda ...
@@ -203,11 +202,11 @@ Haydovchi kelmoqda ...
         await callback.bot.send_message(chat_id=user.id, text=caption)
 
     # Driver ga javob berish va tugmalarni olib tashlash
-    await callback.message.edit_text(
+    await callback.message.answer(
         text=f"✅ Buyurtmani qabul qildingiz!\n\n"
              f"👤 Mijoz: {user.first_name}\n"
              f"📍 Mijoz lokatsiyasi yuborildi",
-        reply_markup=the_driver_has_arrived_keyboard(order_id)  # Tugmalarni olib tashlash
+        reply_markup=the_driver_has_arrived_keyboard(order_id, step="start")  # Tugmalarni olib tashlash
     )
 
     await callback.bot.send_location(
