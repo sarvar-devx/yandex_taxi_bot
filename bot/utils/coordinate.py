@@ -1,6 +1,6 @@
 import math
 
-from database import DriverLocation
+from database import DriverLocation, Driver
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -13,8 +13,9 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c  # km
 
 
-async def get_nearest_driver(lat: float, lon: float):
-    drivers_locations = await DriverLocation.all()
+async def get_nearest_driver(lat: float, lon: float, car_type_id: int):
+    drivers = await Driver.filter(Driver.car_type_id == car_type_id)
+    drivers_locations = await DriverLocation.filter(DriverLocation.driver_id == drivers[0].id)
 
     nearest_driver = None
     min_distance = float("inf")
