@@ -105,7 +105,7 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         estimated_price=car_type.price,
     )
     # ================================================
-    nearest_driver, distance = await get_nearest_driver(pickup_lat, pickup_lon)
+    nearest_driver, distance = await get_nearest_driver(pickup_lat, pickup_lon, car_type.id)
 
     if nearest_driver:
         user = await User.get(id_=callback.from_user.id)
