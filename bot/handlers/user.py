@@ -84,7 +84,6 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     #     await state.clear()
     #     return
 
-
     # ========== YANGI QISM - BUYURTMA YARATISH ==========
     address = await Address.create(
         user_id=user.id,
@@ -140,7 +139,6 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         await callback.message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
     await state.clear()
     await callback.message.delete()
-
 
 
 @user_router.message(F.text == UserButtons.ORDER_HISTORY)
