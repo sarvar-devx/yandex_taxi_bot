@@ -6,7 +6,7 @@ import bot.utils.services as services
 from bot.filters import IsCustomer
 from bot.keyboard import user_order_type, UserButtons, get_location, back_button_markup
 from bot.keyboard.inline import driver_order_keyboard
-from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
+from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time, haversine
 from bot.utils.states import OrderStates
 from database import Order, User, Driver, CarType, Address
 
@@ -72,26 +72,34 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
     data = await state.get_data()
     pickup_lat, pickup_lon = data['pickup_location'].latitude, data['pickup_location'].longitude
 
-    # --- 1. Shartlarga mos haydovchilarni olish ---
-    # drivers = await Driver.filter(
-    #     (Driver.is_active == True) &
-    #     (Driver.has_client == False) &
-    #     (Driver.car_type_id == car_type.id)
-    # )
-
-    # if not drivers:
-    #     await callback.message.answer("❌ Mos keladigan haydovchi topilmadi")
-    #     await state.clear()
-    #     return
-
     # ========== YANGI QISM - BUYURTMA YARATISH ==========
+    """
+        User picup va drop lokatsiyalarini narxini xisoblash
+    """
+    order_distance = haversine(
+        pickup_lat,
+        pickup_lon,
+        data['drop_location'].latitude,
+        data['drop_location'].longitude,
+    )
+
+    car_type = (await CarType.filter(CarType.name == callback.data))[0]
+    estimated_price = int(order_distance * car_type.price)
+
+    await callback.message.answer(
+        text=(
+            f"📍 Masofa: {order_distance:.2f} km\n"
+            f"🚖 Mashina turi {car_type.name}\n"
+            f"💰 Taxmini narx: <b>{int(estimated_price):,} so'm</b>"
+        )
+    )
+
     address = await Address.create(
         user_id=user.id,
         latitude=pickup_lat,
         longitude=pickup_lon
     )
 
-    car_type = (await CarType.filter(CarType.name == callback.data))[0]
     order = await Order.create(
         user_id=user.id,
         car_type_id=car_type.id,
@@ -101,7 +109,7 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         drop_longitude=data['drop_location'].longitude,
         status=Order.OrderStatus.PENDING,  # Kutilmoqda
         pickup_address_id=address.id,
-        estimated_price=car_type.price,
+        estimated_price=estimated_price
     )
     # ================================================
     nearest_driver, distance = await get_nearest_driver(pickup_lat, pickup_lon, car_type.id)
@@ -138,7 +146,7 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
         await order.delete(id_=order.id)
         await callback.message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
     await state.clear()
-    await callback.message.delete()
+    # await callback.message.delete()
 
 
 @user_router.message(F.text == UserButtons.ORDER_HISTORY)

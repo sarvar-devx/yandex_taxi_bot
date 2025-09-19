@@ -4,6 +4,10 @@ from database import DriverLocation, Driver
 
 
 def haversine(lat1, lon1, lat2, lon2):
+    """
+    Haversine formulasi:
+        ikkita geografik nutqta orasidagi masofani hisoblash uchun
+    """
     R = 6371
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)

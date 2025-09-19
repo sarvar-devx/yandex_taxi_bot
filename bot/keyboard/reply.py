@@ -52,8 +52,13 @@ def admin_keyboard_btn() -> ReplyKeyboardMarkup:
 def driver_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard = ReplyKeyboardBuilder()
     driver_keyboard.row(KeyboardButton(text=DriverButtons.START_WORK, request_location=True))
-    driver_keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
     return driver_keyboard
+
+
+def driver_finish_btn():
+    keyboard = ReplyKeyboardBuilder()
+    keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
+    return keyboard.as_markup(resize_keyboard=True)
 
 
 phone_number_rkb = ReplyKeyboardMarkup(

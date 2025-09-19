@@ -6,7 +6,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 
 from bot.filters import DriverHasPermission
-from bot.keyboard import the_driver_has_arrived_keyboard
+from bot.keyboard import the_driver_has_arrived_keyboard, DriverButtons
+from bot.keyboard.reply import driver_finish_btn
 from bot.utils.coordinate import calculate_arrival_time, haversine
 from database import Driver, DriverLocation, Order, User, CarType
 
@@ -87,9 +88,14 @@ async def driver_we_arrived_button(callback: CallbackQuery, bot: Bot):
     # === Yakuniy summa ===
     total_price = int(base_price) + extra_fee
 
-    # Buyurtma yakunlanadi
+    # Buyurtma yakunlanadi order statusini yangilash
     order.status = Order.OrderStatus.COMPLETED
     await order.commit()
+
+    # Driver.has_client ni false qilish
+    driver = await Driver.get(id_=order.driver_id)
+    driver.has_client = False
+    await driver.commit()
 
     user = await User.get(order.user_id)
     await callback.bot.send_message(
@@ -107,12 +113,10 @@ async def driver_we_arrived_button(callback: CallbackQuery, bot: Bot):
     await callback.message.answer(
         f"✅ Buyurtma yakunlandi!\n"
         f"Kutish: {wait_minutes:.1f} daqiqa\n"
-        f"Qo‘shimcha to‘lov: {extra_fee} so‘m"
-    )
-
-    # === Haydovchiga ham xabar beramiz ===
-    await callback.message.edit_text(
-        f"Mijoz manzilda ✅\nUmumiy summa: {total_price:,} so'm"
+        f"Qo‘shimcha to‘lov: {extra_fee} so‘m\n"
+        f"Umumiy summa: {total_price:,} so'm\n\n"
+        f"Keyingi buyurtmani kuting ...",
+        reply_markup=driver_finish_btn()
     )
 
     # Kutish vaqtini tozalash
@@ -128,6 +132,9 @@ async def driver_send_location(message: Message, state: FSMContext):
 
     toll = float(driver.car_type.price) if driver.car_type and driver.car_type.price else 0.0
 
+    if not driver.is_active:
+        await Driver.update(user_id=message.from_user.id, is_active=True)
+
     location = await DriverLocation.get(driver_id=driver.id)
     if location:
         await location.update(latitude=lat, longitude=lon, toll=toll)
@@ -136,9 +143,30 @@ async def driver_send_location(message: Message, state: FSMContext):
 
     await message.answer(
         "📍 Lokatsiyangiz yangilandi. Buyurtmalarni kuting 🚖",
+        reply_markup=driver_finish_btn()
+    )
+    await state.clear()
+
+@driver_router.message(F.text == DriverButtons.FINISH_WORK)
+async def driver_finished_work(message: Message, state: FSMContext):
+    driver = await Driver.get(user_id=message.from_user.id)
+    if not driver:
+        await message.answer("Xatolik: aktiv haydovchi topilmadi")
+        return
+
+    driver.is_active = False
+    driver.has_client = False
+    await driver.commit()
+
+    # Agar lokatsiyani ham o‘chirmoqchi bo‘lsang
+    # await DriverLocation.filter(driver_id=driver.id).delete()
+
+    await message.answer(
+        "✅ Siz ishni tugatdingiz!\nHolatingiz: offline",
         reply_markup=ReplyKeyboardRemove()
     )
     await state.clear()
+
 
 
 @driver_router.callback_query(F.data.startswith("accept_order"))
@@ -177,7 +205,7 @@ async def driver_accept_order(callback: CallbackQuery, state: FSMContext):
             driver_location.latitude, driver_location.longitude
         )
 
-    # ENDI userga driver ma'lumotlarini yuborish
+    # Userga driver ma'lumotlarini yuborish
     caption = f""" ✅ Sizning buyurtmangizni driver qabul qildi! 🚖
 
 👤 Driver: {driver_user.first_name} {driver_user.last_name}
