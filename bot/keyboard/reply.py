@@ -38,10 +38,14 @@ def main_keyboard_btn(is_driver=False) -> ReplyKeyboardBuilder:
     return main_keyboard
 
 
-def admin_keyboard_btn() -> ReplyKeyboardBuilder:
+def admin_keyboard_btn() -> ReplyKeyboardMarkup:
     admin_keyboard = main_keyboard_btn()
     admin_keyboard.row(KeyboardButton(text=AdminButtons.DRIVER_CANDIDATES))
-    admin_keyboard.row(KeyboardButton(text=AdminButtons.NEW_CAR_TYPE))
+    admin_keyboard.row(KeyboardButton(text=AdminButtons.CAR_TYPES))
+    admin_keyboard.adjust(2, repeat=True)
+    admin_keyboard = admin_keyboard.as_markup(resize_keyboard=True)
+    for row in admin_keyboard.keyboard:
+        row[:] = [btn for btn in row if btn.text != UserButtons.BECOME_DRIVER]
     return admin_keyboard
 
 
@@ -50,6 +54,12 @@ def driver_keyboard_btn() -> ReplyKeyboardBuilder:
     driver_keyboard.row(KeyboardButton(text=DriverButtons.START_WORK, request_location=True))
     driver_keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
     return driver_keyboard
+
+
+def driver_finish_btn():
+    keyboard = ReplyKeyboardBuilder()
+    keyboard.row(KeyboardButton(text=DriverButtons.FINISH_WORK))
+    return keyboard.as_markup(resize_keyboard=True)
 
 
 phone_number_rkb = ReplyKeyboardMarkup(
