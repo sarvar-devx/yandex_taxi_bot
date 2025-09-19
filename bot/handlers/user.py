@@ -4,11 +4,10 @@ from aiogram.types import Message, CallbackQuery
 
 import bot.utils.services as services
 from bot.filters import IsCustomer
-from bot.keyboard import user_order_type, UserButtons, get_location, main_keyboard_btn
-from bot.keyboard.reply import order_cancelled
-from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
+from bot.keyboard import main_keyboard_btn
 from bot.keyboard import user_order_type, UserButtons, get_location, back_button_markup
 from bot.keyboard.inline import driver_order_keyboard
+from bot.keyboard.reply import order_cancelled
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time, haversine
 from bot.utils.states import OrderStates
 from database import Order, User, Driver, CarType, Address
