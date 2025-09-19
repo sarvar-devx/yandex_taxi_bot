@@ -10,6 +10,7 @@ class UserButtons:
     BECOME_DRIVER = "🚖 Haydovchi bo'lish"
     BACK = "🔙 Orqaga"
     ORDER_HISTORY = "📝 Buyurtmalar tarixi"
+    ORDER_CANCEL = "Buyurtmani bekor qilish ❌"
 
 
 class DriverButtons:
@@ -70,4 +71,10 @@ back_button_markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=UserButt
 def get_location():
     rkb = ReplyKeyboardBuilder()
     rkb.add(KeyboardButton(text="Manzilni yuborish 📍", request_location=True))
+    return rkb.as_markup(resize_keyboard=True)
+
+
+def order_cancelled(user_id: int):
+    rkb = ReplyKeyboardBuilder()
+    rkb.add(KeyboardButton(text=f"{UserButtons.ORDER_CANCEL}"))
     return rkb.as_markup(resize_keyboard=True)

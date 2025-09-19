@@ -4,6 +4,9 @@ from aiogram.types import Message, CallbackQuery
 
 import bot.utils.services as services
 from bot.filters import IsCustomer
+from bot.keyboard import user_order_type, UserButtons, get_location, main_keyboard_btn
+from bot.keyboard.reply import order_cancelled
+from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time
 from bot.keyboard import user_order_type, UserButtons, get_location, back_button_markup
 from bot.keyboard.inline import driver_order_keyboard
 from bot.utils.coordinate import get_nearest_driver, calculate_arrival_time, haversine
@@ -140,13 +143,20 @@ async def order_type(callback: CallbackQuery, state: FSMContext) -> None:
             f"<strong>Taxminiy kelish vaqti:</strong> <tg-spoiler>{await calculate_arrival_time(distance)}</tg-spoiler>"
         )
         await callback.message.answer_photo(photo=f'{driver.image}', caption=caption)
-        await callback.message.answer("⏳ Buyurtmangiz driverga yuborildi. Kutib turing...")
+        await callback.message.answer("⏳ Buyurtmangiz driverga yuborildi. Kutib turing...",
+                                      reply_markup=order_cancelled(callback.message.from_user.id))
 
     else:
         await order.delete(id_=order.id)
         await callback.message.reply("Afsuski, hozircha yaqin atrofda haydovchi topilmadi ❌")
     await state.clear()
-    # await callback.message.delete()
+
+
+@user_router.message(F.text.startswith(UserButtons.ORDER_CANCEL))
+async def order_cancel(message: Message) -> None:
+    await message.reply(
+        text="Buyurtma bekor qilindi ✅ Buyurtmani bekor qilish bundan keyingi buyurtma qilishga ta'sir qilishi mumkin e'tiborliroq bo'lishingizni so'raymiz !!!",
+        reply_markup=main_keyboard_btn().as_markup(resize_keyboard=True))
 
 
 @user_router.message(F.text == UserButtons.ORDER_HISTORY)
@@ -154,5 +164,23 @@ async def order_history(message: Message) -> None:
     """
     Show user's taxi order history
     """
-    user_history = await Order.get(message.from_user.id)
-    await message.answer("Hozircha mavjud emas NEW UPDATE TO NIGHT !!!")
+    user_order_history = await Order.filter(User.id == message.from_user.id)
+
+    if not user_order_history:
+        await message.answer("📭 Sizda hali buyurtmalar tarixi mavjud emas.")
+        return
+
+    for order in user_order_history:
+        driver = await Driver.get(id_=order.driver_id)
+        user_driver = await User.get(id_=driver.user_id) if driver else None
+        if user_driver:
+            text = (
+                f"📌 <b>Buyurtma #{order.id}</b>\n\n"
+                f"👤 <b>Buyurtmachi:</b> {order.user.first_name} {order.user.last_name}\n"
+                f"🚖 <b>Haydovchi:</b> "
+                f"{user_driver.first_name} {user_driver.last_name if user_driver else 'Noma’lum'}\n"
+                f"📅 <b>Kuni:</b> {order.created_at.strftime('%Y-%m-%d %H:%M')}\n"
+                f"📊 <b>Status:</b> {str(order.status.value).capitalize()}\n"
+            )
+
+            await message.answer(text=text, parse_mode="HTML")
